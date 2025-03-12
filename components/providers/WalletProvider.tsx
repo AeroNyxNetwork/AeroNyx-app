@@ -1,5 +1,3 @@
-// In components/providers/WalletProvider.tsx
-
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -52,22 +50,25 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         return;
       }
       
-      // Request accounts from OKX wallet
-      const accounts = await window.okxwallet.request({ method: 'eth_requestAccounts' });
-      
-      if (accounts && accounts.length > 0) {
-        const account = accounts[0];
-        setAccount(account);
-        setIsConnected(true);
+      // Make sure okxwallet exists before using it
+      if (window.okxwallet) {
+        // Request accounts from OKX wallet
+        const accounts = await window.okxwallet.request({ method: 'eth_requestAccounts' });
         
-        // Store connection in Zustand store
-        createWalletStore.getState().setWallet({
-          account: account,
-          isConnected: true
-        });
-        
-        // Get initial balance
-        await getBalance();
+        if (accounts && accounts.length > 0) {
+          const account = accounts[0];
+          setAccount(account);
+          setIsConnected(true);
+          
+          // Store connection in Zustand store
+          createWalletStore.getState().setWallet({
+            account: account,
+            isConnected: true
+          });
+          
+          // Get initial balance
+          await getBalance();
+        }
       }
     } catch (error) {
       console.error('Error connecting to OKX wallet:', error);
@@ -86,7 +87,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   };
   
   const getBalance = async () => {
-    if (!account || !checkOKXWallet()) return;
+    if (!account || !checkOKXWallet() || !window.okxwallet) return;
     
     try {
       // Get ETH balance from OKX wallet
@@ -108,7 +109,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   // Check if wallet is already connected on mount
   useEffect(() => {
     const checkConnection = async () => {
-      if (checkOKXWallet()) {
+      if (checkOKXWallet() && window.okxwallet) {
         try {
           const accounts = await window.okxwallet.request({ method: 'eth_accounts' });
           if (accounts && accounts.length > 0) {
