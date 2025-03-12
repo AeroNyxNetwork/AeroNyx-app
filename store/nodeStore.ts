@@ -300,15 +300,15 @@ export const useNodeStore = create<NodeState>((set, get) => ({
       // Generate a new node ID
       const nodeId = Date.now().toString();
       
-      // Create the new node object
-      const newNode = {
+      // Create the new node object with proper typing for status
+      const newNode: Node = {
         id: nodeId,
         name: nodeData.name,
         pubkey: nodeData.pubkey,
         ip: `192.168.1.${Math.floor(Math.random() * 255)}`,
         city: 'New York', // Default or detect based on IP
         country: 'USA', // Default or detect based on IP
-        status: 'online',
+        status: 'online', // Explicitly set as 'online' to match the Node type
         staked: nodeData.stakeAmount,
         earned: 0,
         code: 1,
