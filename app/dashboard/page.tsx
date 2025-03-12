@@ -1,0 +1,124 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { ArrowUpRight, Clock, DollarSign, Activity, Server } from 'lucide-react';
+import { useWallet } from '@/components/providers/WalletProvider';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import NodeStatsCard from '@/components/dashboard/NodeStatsCard';
+import EarningsChart from '@/components/dashboard/EarningsChart';
+import MyNodesTable from '@/components/dashboard/MyNodesTable';
+import NetworkStats from '@/components/dashboard/NetworkStats';
+import { useNodeStore } from '@/store/nodeStore';
+
+export default function DashboardPage() {
+  const { isConnected } = useWallet();
+  const { 
+    fetchMyNodes, 
+    fetchNetworkStats, 
+    myNodes, 
+    networkStats,
+    isLoading 
+  } = useNodeStore();
+  
+  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [todayEarnings, setTodayEarnings] = useState(0);
+  
+  useEffect(() => {
+    // Fetch data when component mounts
+    if (isConnected) {
+      fetchMyNodes();
+      fetchNetworkStats();
+      
+      // Mock earnings data
+      setTotalEarnings(Math.random() * 2000);
+      setTodayEarnings(Math.random() * 50);
+    }
+  }, [isConnected, fetchMyNodes, fetchNetworkStats]);
+  
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground mt-2">
+          Monitor your nodes, earnings, and network statistics
+        </p>
+      </div>
+      
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <NodeStatsCard 
+          title="My Nodes"
+          value={myNodes.length.toString()}
+          description="Active nodes on the network"
+          icon={Server}
+          trend={{ value: 0, isPositive: true }}
+          loading={isLoading}
+        />
+        
+        <NodeStatsCard 
+          title="Total Earnings"
+          value={`${totalEarnings.toFixed(2)} SNYX`}
+          description="Across all nodes"
+          icon={DollarSign}
+          trend={{ value: 12.5, isPositive: true }}
+          loading={isLoading}
+        />
+        
+        <NodeStatsCard 
+          title="Today's Earnings"
+          value={`${todayEarnings.toFixed(2)} SNYX`}
+          description="Last 24 hours"
+          icon={Activity}
+          trend={{ value: 3.2, isPositive: true }}
+          loading={isLoading}
+        />
+        
+        <NodeStatsCard 
+          title="Total Hours"
+          value={(myNodes.length * 24 * 7).toString() + "h"}
+          description="Nodes online time"
+          icon={Clock}
+          trend={{ value: 0, isPositive: true }}
+          loading={isLoading}
+        />
+      </div>
+      
+      {/* Earnings Chart and Network Stats */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="glass-card col-span-2">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-semibold">Earnings Statistics</CardTitle>
+              <Button variant="ghost" size="sm" className="h-8 gap-1 text-primary">
+                View Details
+                <ArrowUpRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <EarningsChart />
+          </CardContent>
+        </Card>
+        
+        <NetworkStats stats={networkStats} isLoading={isLoading} />
+      </div>
+      
+      {/* My Nodes Table */}
+      <Card className="glass-card">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-semibold">My Nodes</CardTitle>
+            <Button variant="outline" size="sm" className="h-8 gap-1">
+              View All
+              <ArrowUpRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <MyNodesTable nodes={myNodes} isLoading={isLoading} />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
