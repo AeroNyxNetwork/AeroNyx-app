@@ -1,4 +1,22 @@
-// Updated NodeStatsCard.tsx
+'use client';
+
+import { Card, CardContent } from '@/components/ui/card';
+import { LucideIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
+
+interface NodeStatsCardProps {
+  title: string;
+  value: string;
+  description: string;
+  icon: LucideIcon;
+  trend?: {
+    value: number;
+    isPositive: boolean;
+  };
+  loading?: boolean;
+}
+
 export default function NodeStatsCard({
   title,
   value,
