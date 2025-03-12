@@ -153,7 +153,7 @@ export const useNodeStore = create<NodeState>((set, get) => ({
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const { myNodes } = get();
-      set({ myNodes: [...myNodes, { ...node, id: Date.now().toString() }] });
+      set({ myNodes: [...myNodes, node] });
     } catch (error) {
       console.error('Error adding node:', error);
     } finally {
@@ -206,12 +206,12 @@ export const useNodeStore = create<NodeState>((set, get) => ({
       const { myNodes, allNodes } = get();
       
       // Update in myNodes
-      const updatedMyNodes = myNodes.map(node => 
+      const updatedMyNodes = myNodes.map(node =>
         node.id === id ? { ...node, staked: node.staked + amount } : node
       );
       
       // Update in allNodes if present
-      const updatedAllNodes = allNodes.map(node => 
+      const updatedAllNodes = allNodes.map(node =>
         node.id === id ? { ...node, staked: node.staked + amount } : node
       );
       
@@ -235,22 +235,14 @@ export const useNodeStore = create<NodeState>((set, get) => ({
       const { myNodes, allNodes } = get();
       
       // Update in myNodes
-      const updatedMyNodes = myNodes.map(node => {
-        if (node.id === id) {
-          const newStaked = Math.max(0, node.staked - amount);
-          return { ...node, staked: newStaked };
-        }
-        return node;
-      });
+      const updatedMyNodes = myNodes.map(node =>
+        node.id === id ? { ...node, staked: Math.max(0, node.staked - amount) } : node
+      );
       
       // Update in allNodes if present
-      const updatedAllNodes = allNodes.map(node => {
-        if (node.id === id) {
-          const newStaked = Math.max(0, node.staked - amount);
-          return { ...node, staked: newStaked };
-        }
-        return node;
-      });
+      const updatedAllNodes = allNodes.map(node =>
+        node.id === id ? { ...node, staked: Math.max(0, node.staked - amount) } : node
+      );
       
       set({ 
         myNodes: updatedMyNodes,
@@ -269,13 +261,18 @@ export const useNodeStore = create<NodeState>((set, get) => ({
       // In a real app, this would be an API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock network stats
+      // Calculate mock network stats
+      const totalNodes = 1500;
+      const activeNodes = 1200;
+      const totalStaked = 7500000;
+      const averageRewards = 125.5;
+      
       set({
         networkStats: {
-          totalNodes: 867,
-          activeNodes: 754,
-          totalStaked: 1254000,
-          averageRewards: 128.5
+          totalNodes,
+          activeNodes,
+          totalStaked,
+          averageRewards
         }
       });
     } catch (error) {
@@ -283,4 +280,4 @@ export const useNodeStore = create<NodeState>((set, get) => ({
     } finally {
       set({ isLoading: false });
     }
-  },
+  }
