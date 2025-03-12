@@ -110,10 +110,12 @@ export default function UserIP({ onClose }: UserIPProps) {
         </div>
       </div>
       
-      <DownloadModal
-        isOpen={showDownloadModal}
-        onClose={() => setShowDownloadModal(false)}
-      />
+      {showDownloadModal && (
+        <DownloadModal
+          isOpen={showDownloadModal}
+          onClose={() => setShowDownloadModal(false)}
+        />
+      )}
     </>
   );
 }
