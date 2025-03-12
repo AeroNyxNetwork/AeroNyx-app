@@ -13,13 +13,6 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,14 +28,13 @@ export default function RegisterNodePage() {
   const router = useRouter();
   const { toast } = useToast();
   const { isConnected, balance, connect } = useWallet();
-  const { addNode } = useNodeStore();
+  const { registerNode, isLoading } = useNodeStore();
   
   // State variables
   const [nodeType, setNodeType] = useState<'server' | 'mobile'>('server');
   const [nodeName, setNodeName] = useState('');
   const [selectedPubKey, setSelectedPubKey] = useState<string | null>(null);
   const [stakeAmount, setStakeAmount] = useState(1000);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableNodes, setAvailableNodes] = useState<Array<{pubkey: string, status: string}>>([
     { pubkey: '0x7c9e73d4c71dae564d41f78d56439bb4ba87592f', status: 'available' },
     { pubkey: '0x8d71327d5e84d87a2ed52f674da8d4d65116217a', status: 'available' },
@@ -103,21 +95,12 @@ export default function RegisterNodePage() {
   const handleRegister = async () => {
     if (!validateInput()) return;
     
-    setIsSubmitting(true);
     try {
-      // Mock successful registration
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Add node to store
-      await addNode({
-        id: Date.now().toString(),
+      await registerNode({
         name: nodeName,
         pubkey: selectedPubKey!,
-        ip: `192.168.1.${Math.floor(Math.random() * 255)}`,
-        status: 'online',
-        staked: stakeAmount,
-        earned: 0,
-        code: 1
+        stakeAmount,
+        nodeType
       });
       
       toast({
@@ -134,8 +117,6 @@ export default function RegisterNodePage() {
         description: "There was an error registering your node. Please try again.",
         variant: "destructive"
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
   
@@ -332,9 +313,9 @@ export default function RegisterNodePage() {
             <Button 
               className="btn-gradient w-full py-6 text-base font-medium"
               onClick={handleRegister}
-              disabled={isSubmitting || !isConnected}
+              disabled={isLoading || !isConnected}
             >
-              {isSubmitting ? 'Processing...' : 'Register to SOON Network'}
+              {isLoading ? 'Processing...' : 'Register to SOON Network'}
             </Button>
           </CardContent>
         </Card>
