@@ -280,5 +280,67 @@ export const useNodeStore = create<NodeState>((set, get) => ({
     } finally {
       set({ isLoading: false });
     }
+  },
+
+  // Add this to your store/nodeStore.ts file inside the NodeState interface:
+
+// Registration-related functions
+registerNode: (nodeData: {
+  name: string;
+  pubkey: string;
+  stakeAmount: number;
+  nodeType: 'server' | 'mobile';
+}) => Promise<void>;
+
+// Then add this inside the store implementation:
+
+registerNode: async (nodeData) => {
+  set({ isLoading: true });
+  try {
+    // In a real app, this would be an API call to your blockchain
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Generate a new node ID
+    const nodeId = Date.now().toString();
+    
+    // Create the new node object
+    const newNode = {
+      id: nodeId,
+      name: nodeData.name,
+      pubkey: nodeData.pubkey,
+      ip: `192.168.1.${Math.floor(Math.random() * 255)}`,
+      city: 'New York', // Default or detect based on IP
+      country: 'USA', // Default or detect based on IP
+      status: 'online',
+      staked: nodeData.stakeAmount,
+      earned: 0,
+      code: 1,
+    };
+    
+    // Add node to the store
+    const { myNodes } = get();
+    set({ 
+      myNodes: [...myNodes, newNode],
+      selectedNode: newNode
+    });
+    
+    // Update network stats
+    const { networkStats } = get();
+    set({
+      networkStats: {
+        ...networkStats,
+        totalNodes: networkStats.totalNodes + 1,
+        activeNodes: networkStats.activeNodes + 1,
+        totalStaked: networkStats.totalStaked + nodeData.stakeAmount
+      }
+    });
+    
+    return nodeId;
+  } catch (error) {
+    console.error('Error registering node:', error);
+    throw new Error('Failed to register node');
+  } finally {
+    set({ isLoading: false });
   }
+}
 }));
