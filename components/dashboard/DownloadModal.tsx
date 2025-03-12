@@ -8,7 +8,14 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { AeroNyxLogo } from '@/components/ui/logo';
-import { Apple, Windows, Linux, Smartphone, Chrome, AlertTriangle } from 'lucide-react';
+import { 
+  Apple, 
+  Monitor, // Use Monitor instead of Windows
+  Server, // Use Server instead of Linux
+  Smartphone, 
+  Chrome, 
+  AlertTriangle 
+} from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -37,14 +44,14 @@ const platforms: Platform[] = [
   },
   {
     name: 'Windows',
-    icon: Windows,
+    icon: Monitor, // Changed from Windows to Monitor
     versions: [
       { available: true, version: '1.2.5', link: '#windows' },
     ]
   },
   {
     name: 'Linux',
-    icon: Linux,
+    icon: Server, // Changed from Linux to Server
     versions: [
       { available: true, version: '1.2.5', link: '#linux' },
     ]
