@@ -196,3 +196,4 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
       )}
     </>
   );
+}
