@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import Sidebar from '@/components/layout/Sidebar';
-import Header from '@/components/layout/Header';
+import { Sidebar } from '@/components/layout/Sidebar';
+import { Header } from '@/components/layout/Header';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import MobileNav from '@/components/layout/MobileNav';
+import { MobileNav } from '@/components/layout/MobileNav';
 
 export default function DashboardLayout({
   children,
