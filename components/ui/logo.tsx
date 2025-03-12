@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 
 interface LogoProps {
   className?: string;
-}
+} 
 
 export const AeroNyxLogo = ({ className }: LogoProps) => {
   return (
