@@ -6,6 +6,15 @@ const nextConfig = {
     domains: ['imagedelivery.net'],
   },
   output: 'standalone',
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/dashboard',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
