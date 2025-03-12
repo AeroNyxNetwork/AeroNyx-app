@@ -1,47 +1,52 @@
-/* Add to app/globals.css */
-:root {
-  /* More vibrant primary colors */
-  --primary: 255 86 68%;  /* More vibrant purple */
-  --secondary: 260 90% 68%; /* Deep electric blue */
-  --accent: 280 100% 65%; /* Vibrant accent */
-  
-  /* Enhanced dark background */
-  --background: 240 15% 3%;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Enhanced colors for Web3 aesthetic */
+    --background: 240 15% 3%;
+    --foreground: 0 0% 100%;
+    
+    --card: 240 28% 13%;
+    --card-foreground: 0 0% 100%;
+    
+    --popover: 240 28% 13%;
+    --popover-foreground: 0 0% 100%;
+    
+    --primary: 255 86% 68%;  /* More vibrant purple */
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 260 90% 68%; /* Deep electric blue */
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 240 5% 25%;
+    --muted-foreground: 0 0% 70%;
+    
+    --accent: 280 100% 65%; /* Vibrant accent */
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 240 5% 26%;
+    --input: 240 5% 26%;
+    --ring: 255 89% 67%;
+    
+    --radius: 0.5rem;
+  }
 }
 
-/* Enhanced animated background */
-.animated-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-  background: 
-    radial-gradient(circle at 25% 25%, rgba(120, 80, 255, 0.08), rgba(10, 10, 18, 0) 50%),
-    radial-gradient(circle at 75% 75%, rgba(80, 100, 255, 0.08), rgba(10, 10, 18, 0) 50%),
-    radial-gradient(circle at 50% 50%, rgba(80, 50, 255, 0.06), rgba(10, 10, 18, 0) 55%);
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
 }
 
-/* Add a subtle grid pattern for cyber feel */
-.cyber-grid {
-  background-image: 
-    linear-gradient(rgba(100, 100, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(100, 100, 255, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: center center;
-}
-
-/* Enhanced glass morphism */
-.glass-card {
-  @apply glass rounded-xl border border-white/5;
-  background-color: rgba(20, 20, 40, 0.5);
-  box-shadow: 
-    0 10px 15px -3px rgba(0, 0, 0, 0.4),
-    0 4px 6px -2px rgba(0, 0, 0, 0.2),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-}
 /* Glass Morphism */
 @layer components {
   .glass {
@@ -70,32 +75,138 @@
   }
 }
 
-/* Glowing effect for elements */
-.glow {
-  box-shadow: 0 0 15px rgba(120, 80, 255, 0.5);
-  transition: box-shadow 0.3s ease;
+/* Button Styles */
+@layer components {
+  .btn-gradient {
+    @apply relative overflow-hidden rounded-lg;
+    background: linear-gradient(135deg, #7462f7, #5d4af6);
+    box-shadow: 
+      0 4px 12px rgba(104, 82, 255, 0.15),
+      0 0 0 1px rgba(104, 82, 255, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 8px 20px rgba(104, 82, 255, 0.3),
+      0 0 0 1px rgba(104, 82, 255, 0.3);
+    background: linear-gradient(135deg, #7962ff, #9076ff);
+  }
+
+  .btn-gradient:active {
+    transform: translateY(0);
+  }
+
+  .btn-gradient::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+  }
 }
 
+/* Glowing elements */
+@layer components {
+  .glow {
+    box-shadow: 0 0 15px rgba(120, 80, 255, 0.5);
+    transition: box-shadow 0.3s ease;
+  }
 
-
-.glow:hover {
-  box-shadow: 0 0 20px rgba(120, 80, 255, 0.8);
+  .glow:hover {
+    box-shadow: 0 0 20px rgba(120, 80, 255, 0.8);
+  }
+  
+  /* Cyber grid pattern for backgrounds */
+  .cyber-grid {
+    background-image: 
+      linear-gradient(rgba(100, 100, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(100, 100, 255, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center center;
+  }
 }
 
-/* Advanced button styles */
-.btn-gradient {
-  @apply relative overflow-hidden rounded-lg;
-  background: linear-gradient(135deg, #6852ff, #8066ff);
-  box-shadow: 
-    0 4px 12px rgba(104, 82, 255, 0.15),
-    0 0 0 1px rgba(104, 82, 255, 0.2);
-  transition: all 0.3s ease;
+/* Animations */
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  20% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
-.btn-gradient:hover {
-  transform: translateY(-2px);
-  box-shadow: 
-    0 8px 20px rgba(104, 82, 255, 0.3),
-    0 0 0 1px rgba(104, 82, 255, 0.3);
-  background: linear-gradient(135deg, #7962ff, #9076ff);
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Animated Background */
+.animated-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background: 
+    radial-gradient(circle at 25% 25%, rgba(120, 80, 255, 0.08), rgba(10, 10, 18, 0) 50%),
+    radial-gradient(circle at 75% 75%, rgba(80, 100, 255, 0.08), rgba(10, 10, 18, 0) 50%),
+    radial-gradient(circle at 50% 50%, rgba(80, 50, 255, 0.06), rgba(10, 10, 18, 0) 55%);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 10, 18, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(116, 98, 247, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(116, 98, 247, 0.7);
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply font-bold text-transparent bg-clip-text;
+  background-image: linear-gradient(90deg, #7462f7, #8473ff);
+}
+
+/* Animation classes */
+.animate-pulse-slow {
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
