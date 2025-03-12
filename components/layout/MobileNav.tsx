@@ -37,7 +37,7 @@ interface MobileNavProps {
   onOpenChange: (isOpen: boolean) => void;
 }
 
-export default function MobileNav({ isOpen, onOpenChange }: MobileNavProps) {
+export function MobileNav({ isOpen, onOpenChange }: MobileNavProps) {
   const pathname = usePathname();
   
   // Prevent scrolling when the mobile nav is open
