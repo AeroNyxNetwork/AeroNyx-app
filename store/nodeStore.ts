@@ -281,3 +281,4 @@ export const useNodeStore = create<NodeState>((set, get) => ({
       set({ isLoading: false });
     }
   }
+}));
