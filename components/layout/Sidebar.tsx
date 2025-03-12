@@ -29,7 +29,7 @@ const sidebarItems: SidebarItem[] = [
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
-export default function Sidebar() {
+export function Sidebar() {
   const pathname = usePathname();
   
   return (
