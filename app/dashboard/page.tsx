@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowUpRight, Clock, DollarSign, Activity, Server } from 'lucide-react';
+import { ArrowUpRight, Clock, DollarSign, Activity, Server, PlusCircle } from 'lucide-react';
 import { useWallet } from '@/components/providers/WalletProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,9 +10,12 @@ import EarningsChart from '@/components/dashboard/EarningsChart';
 import MyNodesTable from '@/components/dashboard/MyNodesTable';
 import NetworkStats from '@/components/dashboard/NetworkStats';
 import NetworkVisualization from '@/components/dashboard/NetworkVisualization';
+import RegisterNodeModal from '@/components/dashboard/RegisterNodeModal';
 import { useNodeStore } from '@/store/nodeStore';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { isConnected } = useWallet();
   const { 
     fetchMyNodes, 
@@ -42,11 +45,16 @@ export default function DashboardPage() {
       {/* Background network visualization */}
       <NetworkVisualization />
       
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground mt-2">
-          Monitor your nodes, earnings, and network statistics
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground mt-2">
+            Monitor your nodes, earnings, and network statistics
+          </p>
+        </div>
+        
+        {/* Register Node Button */}
+        <RegisterNodeModal />
       </div>
       
       {/* Stats Overview */}
@@ -119,9 +127,14 @@ export default function DashboardPage() {
         <CardHeader className="pb-2 z-10 relative">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-semibold">My Nodes</CardTitle>
-            <Button variant="outline" size="sm" className="h-8 gap-1">
-              View All
-              <ArrowUpRight className="h-4 w-4" />
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="h-8 gap-1"
+              onClick={() => router.push('/register-node')}
+            >
+              <PlusCircle className="h-4 w-4 mr-1" />
+              Deploy Node
             </Button>
           </div>
         </CardHeader>
