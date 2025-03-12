@@ -42,12 +42,41 @@
     inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
 }
+/* Glass Morphism */
+@layer components {
+  .glass {
+    @apply bg-opacity-20 backdrop-blur-md border border-white/10 shadow-xl;
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+  }
+
+  .glass-card {
+    @apply rounded-xl border border-white/5;
+    background-color: rgba(20, 20, 40, 0.5);
+    box-shadow: 
+      0 10px 15px -3px rgba(0, 0, 0, 0.4),
+      0 4px 6px -2px rgba(0, 0, 0, 0.2),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+  }
+
+  .glass-navbar {
+    @apply fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b border-white/5;
+    background-color: rgba(10, 10, 18, 0.8);
+  }
+
+  .glass-sidebar {
+    @apply fixed top-0 left-0 bottom-0 z-50 backdrop-blur-md;
+    background-color: rgba(18, 18, 31, 0.7);
+  }
+}
 
 /* Glowing effect for elements */
 .glow {
   box-shadow: 0 0 15px rgba(120, 80, 255, 0.5);
   transition: box-shadow 0.3s ease;
 }
+
+
 
 .glow:hover {
   box-shadow: 0 0 20px rgba(120, 80, 255, 0.8);
