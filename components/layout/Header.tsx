@@ -28,7 +28,7 @@ interface HeaderProps {
   showMenuButton?: boolean;
 }
 
-export default function Header({ onMenuClick, showMenuButton = true }: HeaderProps) {
+export function Header({ onMenuClick, showMenuButton = true }: HeaderProps) {
   const { isConnected, account, balance, connect, disconnect } = useWallet();
   const [showUserIP, setShowUserIP] = useState(true);
   
