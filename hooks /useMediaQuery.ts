@@ -17,26 +17,37 @@ import { useState, useEffect } from 'react';
  * const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
  */
 export function useMediaQuery(query: string): boolean {
+  // Initialize with a default value to avoid hydration issues
   const [matches, setMatches] = useState<boolean>(false);
   
   useEffect(() => {
+    // Set initial value on client side to avoid SSR mismatch
+    setMatches(window.matchMedia(query).matches);
+    
     // Create a media query list
     const media = window.matchMedia(query);
     
-    // Update the state initially
-    setMatches(media.matches);
-    
-    // Create a handler to update the state when the match changes
-    const listener = (event: MediaQueryListEvent) => {
-      setMatches(event.matches);
+    // Create a handler to update the state
+    const updateMatches = () => {
+      setMatches(media.matches);
     };
     
     // Add the listener
-    media.addEventListener('change', listener);
+    if (media.addEventListener) {
+      media.addEventListener('change', updateMatches);
+    } else {
+      // For older browsers
+      media.addListener(updateMatches);
+    }
     
     // Clean up
     return () => {
-      media.removeEventListener('change', listener);
+      if (media.removeEventListener) {
+        media.removeEventListener('change', updateMatches);
+      } else {
+        // For older browsers
+        media.removeListener(updateMatches);
+      }
     };
   }, [query]);
   
