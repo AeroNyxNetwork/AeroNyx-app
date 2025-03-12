@@ -9,6 +9,7 @@ import NodeStatsCard from '@/components/dashboard/NodeStatsCard';
 import EarningsChart from '@/components/dashboard/EarningsChart';
 import MyNodesTable from '@/components/dashboard/MyNodesTable';
 import NetworkStats from '@/components/dashboard/NetworkStats';
+import NetworkVisualization from '@/components/dashboard/NetworkVisualization';
 import { useNodeStore } from '@/store/nodeStore';
 
 export default function DashboardPage() {
@@ -37,7 +38,10 @@ export default function DashboardPage() {
   }, [isConnected, fetchMyNodes, fetchNetworkStats]);
   
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative">
+      {/* Background network visualization */}
+      <NetworkVisualization />
+      
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground mt-2">
@@ -86,8 +90,11 @@ export default function DashboardPage() {
       
       {/* Earnings Chart and Network Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="glass-card col-span-2">
-          <CardHeader className="pb-2">
+        <Card className="glass-card col-span-2 overflow-hidden relative">
+          {/* Add subtle gradient border */}
+          <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-xl" />
+          
+          <CardHeader className="pb-2 z-10 relative">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-semibold">Earnings Statistics</CardTitle>
               <Button variant="ghost" size="sm" className="h-8 gap-1 text-primary">
@@ -96,7 +103,7 @@ export default function DashboardPage() {
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="z-10 relative">
             <EarningsChart />
           </CardContent>
         </Card>
@@ -105,8 +112,11 @@ export default function DashboardPage() {
       </div>
       
       {/* My Nodes Table */}
-      <Card className="glass-card">
-        <CardHeader className="pb-2">
+      <Card className="glass-card overflow-hidden relative">
+        {/* Add subtle gradient border */}
+        <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-xl" />
+        
+        <CardHeader className="pb-2 z-10 relative">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-semibold">My Nodes</CardTitle>
             <Button variant="outline" size="sm" className="h-8 gap-1">
@@ -115,7 +125,7 @@ export default function DashboardPage() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="z-10 relative">
           <MyNodesTable nodes={myNodes} isLoading={isLoading} />
         </CardContent>
       </Card>
