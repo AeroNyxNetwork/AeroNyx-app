@@ -1,3 +1,8 @@
+/*
+ * @Description: 
+ * @Date: 2025-03-13 10:57:54
+ * @LastEditTime: 2025-03-13 15:52:35
+ */
 'use client';
 
 import { useEffect } from 'react';
@@ -11,26 +16,26 @@ import { useWallet } from '@/components/providers/WalletProvider';
 export default function NodesPage() {
   const { isConnected } = useWallet();
   const { fetchMyNodes, myNodes, isLoading } = useNodeStore();
-  
+
   useEffect(() => {
     if (isConnected) {
       fetchMyNodes();
     }
   }, [isConnected, fetchMyNodes]);
-  
+
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">My Nodes</h1>
         <Button className="btn-gradient">
           <PlusCircle className="h-4 w-4 mr-2" />
           Deploy New Node
         </Button>
-      </div>
-      
-      <Card className="glass-card">
+      </div> */}
+
+      <Card className="glass-card  mt-4">
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-semibold">My Deployed Nodes</CardTitle>
+          <CardTitle className="text-lg font-semibold">My Nodes</CardTitle>
         </CardHeader>
         <CardContent>
           <MyNodesTable nodes={myNodes} isLoading={isLoading} />

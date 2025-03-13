@@ -7,32 +7,32 @@
     /* Enhanced colors for Web3 aesthetic */
     --background: 240 15% 3%;
     --foreground: 0 0% 100%;
-    
+
     --card: 240 28% 13%;
     --card-foreground: 0 0% 100%;
-    
+
     --popover: 240 28% 13%;
     --popover-foreground: 0 0% 100%;
-    
-    --primary: 255 86% 68%;  /* More vibrant purple */
+
+    --primary: 255 86% 68%; /* More vibrant purple */
     --primary-foreground: 0 0% 100%;
-    
+
     --secondary: 260 90% 68%; /* Deep electric blue */
     --secondary-foreground: 0 0% 100%;
-    
+
     --muted: 240 5% 25%;
     --muted-foreground: 0 0% 70%;
-    
+
     --accent: 280 100% 65%; /* Vibrant accent */
     --accent-foreground: 0 0% 100%;
-    
+
     --destructive: 0 85% 60%;
     --destructive-foreground: 0 0% 100%;
-    
+
     --border: 240 5% 26%;
     --input: 240 5% 26%;
     --ring: 255 89% 67%;
-    
+
     --radius: 0.5rem;
   }
 }
@@ -53,21 +53,24 @@
     @apply rounded-xl border border-white/5 relative overflow-hidden;
     background-color: rgba(20, 20, 40, 0.4);
     backdrop-filter: blur(12px);
-    box-shadow: 
-      0 10px 30px -5px rgba(0, 0, 0, 0.3),
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3),
       0 4px 10px -2px rgba(0, 0, 0, 0.2),
       inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   }
-  
+
   .glass-card::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(120deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+    background: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0)
+    );
     z-index: 0;
     pointer-events: none;
   }
-  
+
   .glass-button {
     @apply relative overflow-hidden rounded-lg flex items-center justify-center;
     background-color: rgba(116, 98, 247, 0.15);
@@ -76,41 +79,41 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
   }
-  
+
   .glass-button:hover {
     background-color: rgba(116, 98, 247, 0.25);
     border-color: rgba(116, 98, 247, 0.4);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   }
-  
+
   .glass-button:active {
     transform: translateY(0);
   }
-  
+
   .glass-input {
     @apply bg-opacity-10 backdrop-blur-md border border-white/10 rounded-lg;
     background-color: rgba(20, 20, 40, 0.2);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
   }
-  
+
   .glass-input:focus {
     @apply border-primary/40;
     box-shadow: 0 0 0 3px rgba(116, 98, 247, 0.1);
   }
-  
+
   .glass-dropdown {
     @apply bg-opacity-90 backdrop-blur-xl border border-white/10 rounded-lg;
     background-color: rgba(20, 20, 40, 0.8);
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
   }
-  
+
   .glass-navbar {
-    @apply fixed top-0 left-0 right-0 z-40 backdrop-blur-xl border-b border-white/5;
+    @apply w-full z-40 backdrop-blur-xl border-b border-white/5;
     background-color: rgba(10, 10, 18, 0.6);
   }
-  
+
   .glass-sidebar {
     @apply fixed top-0 left-0 bottom-0 z-50 backdrop-blur-xl border-r border-white/5;
     background-color: rgba(18, 18, 31, 0.6);
@@ -122,19 +125,15 @@
   .btn-gradient {
     @apply relative overflow-hidden rounded-lg;
     background: linear-gradient(135deg, #7462f7, #5d4af6);
-    box-shadow: 
-      0 4px 12px rgba(104, 82, 255, 0.2),
-      0 0 0 1px rgba(104, 82, 255, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(104, 82, 255, 0.2),
+      0 0 0 1px rgba(104, 82, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
   }
 
   .btn-gradient:hover {
     transform: translateY(-2px);
-    box-shadow: 
-      0 8px 24px rgba(104, 82, 255, 0.3),
-      0 0 0 1px rgba(104, 82, 255, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 24px rgba(104, 82, 255, 0.3),
+      0 0 0 1px rgba(104, 82, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     background: linear-gradient(135deg, #7962ff, #9076ff);
   }
 
@@ -149,7 +148,12 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
     transform: rotate(45deg);
     animation: shine 3s infinite;
   }
@@ -169,18 +173,31 @@
   right: 0;
   bottom: 0;
   z-index: -1;
-  background: 
-    radial-gradient(circle at 25% 25%, rgba(120, 80, 255, 0.08), rgba(10, 10, 18, 0) 50%),
-    radial-gradient(circle at 75% 75%, rgba(80, 100, 255, 0.08), rgba(10, 10, 18, 0) 50%),
-    radial-gradient(circle at 50% 50%, rgba(80, 50, 255, 0.06), rgba(10, 10, 18, 0) 55%);
+  background: radial-gradient(
+      circle at 25% 25%,
+      rgba(120, 80, 255, 0.08),
+      rgba(10, 10, 18, 0) 50%
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(80, 100, 255, 0.08),
+      rgba(10, 10, 18, 0) 50%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(80, 50, 255, 0.06),
+      rgba(10, 10, 18, 0) 55%
+    );
 }
 
 .animated-bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: 
-    linear-gradient(rgba(120, 80, 255, 0.02) 1px, transparent 1px),
+  background-image: linear-gradient(
+      rgba(120, 80, 255, 0.02) 1px,
+      transparent 1px
+    ),
     linear-gradient(90deg, rgba(120, 80, 255, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: center center;
@@ -235,7 +252,8 @@
 }
 
 @keyframes pulse-slow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -244,7 +262,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -253,7 +272,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 10px rgba(116, 98, 247, 0.2);
   }
   50% {
@@ -263,8 +283,10 @@
 
 /* Cyber grid pattern for backgrounds */
 .cyber-grid {
-  background-image: 
-    linear-gradient(rgba(100, 100, 255, 0.05) 1px, transparent 1px),
+  background-image: linear-gradient(
+      rgba(100, 100, 255, 0.05) 1px,
+      transparent 1px
+    ),
     linear-gradient(90deg, rgba(100, 100, 255, 0.05) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: center center;

@@ -1,3 +1,8 @@
+/*
+ * @Description: 
+ * @Date: 2025-03-13 10:57:54
+ * @LastEditTime: 2025-03-13 17:35:08
+ */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -24,29 +29,33 @@ export default function DashboardLayout({
   }, [pathname, isMobile]);
 
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="relative min-h-screen   bg-background">
       <div className="animated-bg" />
-      
+
       {/* Desktop Sidebar */}
-      <div className={`hidden lg:block`}>
+      {/* <div className={`hidden lg:block`}>
         <Sidebar />
-      </div>
-      
+      </div> */}
+
       {/* Mobile Nav */}
       <div className="block lg:hidden">
-        <MobileNav 
-          isOpen={isSidebarOpen} 
-          onOpenChange={setIsSidebarOpen} 
+        <MobileNav
+          isOpen={isSidebarOpen}
+          onOpenChange={setIsSidebarOpen}
         />
       </div>
-      
+
       {/* Main Content */}
-      <div className="lg:pl-72 min-h-screen">
-        <Header 
-          onMenuClick={() => setIsSidebarOpen(prev => !prev)} 
-          showMenuButton={isMobile}
-        />
-        <main className="p-4 md:p-6 lg:p-8 pt-24">
+      <div className=" min-h-screen">
+        {
+          pathname !== "/dashboard/map" &&
+          < Header
+            onMenuClick={() => setIsSidebarOpen(prev => !prev)}
+            showMenuButton={isMobile}
+          />
+        }
+
+        <main className="p-4 pt-0">
           {children}
         </main>
       </div>
