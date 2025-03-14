@@ -1,7 +1,7 @@
 /*
  * @Description: 
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-13 16:47:58
+ * @LastEditTime: 2025-03-14 11:46:04
  */
 'use client';
 
@@ -31,7 +31,7 @@ export default function NetworkPage() {
 
 
   const handleSearch = () => {
-    onSearch(queries);
+    // onSearch(queries);
   };
 
   const handleClear = () => {

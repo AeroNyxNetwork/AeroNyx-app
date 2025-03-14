@@ -1,3 +1,8 @@
+/*
+ * @Description: 
+ * @Date: 2025-03-13 10:57:54
+ * @LastEditTime: 2025-03-14 11:48:37
+ */
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -24,22 +29,22 @@ export default function NodeStatsCard({
   icon: Icon,
   trend,
   loading = false
-}: NodeStatsCardProps) {
+}: any) {
   return (
     <Card className="glass-card relative overflow-hidden">
       {/* Add subtle gradient border */}
       <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-xl" />
-      
+
       {/* Add subtle animated glow */}
       <div className="absolute inset-0 opacity-30 bg-gradient-to-br from-primary/10 to-transparent rounded-xl animate-pulse-slow" />
-      
+
       <CardContent className="p-6">
         <div className="flex justify-between items-start">
           <div>
             <p className="text-sm font-medium text-muted-foreground mb-1">
               {title}
             </p>
-            
+
             {loading ? (
               <div className="h-8 w-32 bg-gray-800/50 animate-pulse rounded-md" />
             ) : (
@@ -47,17 +52,17 @@ export default function NodeStatsCard({
                 {value}
               </h3>
             )}
-            
+
             <p className="text-xs text-muted-foreground mt-1">
               {description}
             </p>
           </div>
-          
+
           <div className="rounded-full p-2.5 bg-primary/20 backdrop-blur-md border border-primary/30">
             <Icon className="h-5 w-5 text-primary" />
           </div>
         </div>
-        
+
         {trend && trend.value > 0 && (
           <div className="mt-4 flex items-center">
             <div
