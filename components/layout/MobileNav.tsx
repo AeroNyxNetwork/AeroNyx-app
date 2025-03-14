@@ -28,7 +28,6 @@ const navItems: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'My Nodes', href: '/dashboard/nodes', icon: Server },
   { name: 'All Network Nodes', href: '/dashboard/network', icon: Layers },
-  // { name: 'Map', href: '/dashboard/map', icon: MapPin },
 ];
 
 interface MobileNavProps {
