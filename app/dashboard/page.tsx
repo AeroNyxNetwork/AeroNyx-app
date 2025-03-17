@@ -19,9 +19,7 @@ export default function DashboardPage() {
   const { isConnected } = useWallet();
   const {
     fetchMyNodes,
-    fetchNetworkStats,
     myNodes,
-    networkStats,
     isLoading
   } = useNodeStore();
 
@@ -32,19 +30,29 @@ export default function DashboardPage() {
     // Fetch data when component mounts
     if (isConnected) {
       fetchMyNodes();
-      fetchNetworkStats();
+
 
       // Mock earnings data
       setTotalEarnings(Math.random() * 2000);
       setTodayEarnings(Math.random() * 50);
     }
-  }, [isConnected, fetchMyNodes, fetchNetworkStats]);
+  }, [isConnected, fetchMyNodes]);
 
   return (
     <div className="space-y-8 relative">
       {/* Background network visualization */}
       <NetworkVisualization />
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground mt-2">
+            Monitor your nodes, earnings, and network statistics
+          </p>
+        </div>
 
+        {/* Register Node Button */}
+        <RegisterNodeModal />
+      </div>
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <NodeStatsCard

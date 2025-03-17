@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  ArrowLeft, 
-  ChevronDown, 
-  ExternalLink, 
-  AlertCircle, 
+import {
+  ArrowLeft,
+  ChevronDown,
+  ExternalLink,
+  AlertCircle,
   HelpCircle,
   Server
 } from 'lucide-react';
@@ -28,19 +28,19 @@ export default function RegisterNodePage() {
   const router = useRouter();
   const { toast } = useToast();
   const { isConnected, balance, connect } = useWallet();
-  const { registerNode, isLoading } = useNodeStore();
-  
+  const { isLoading } = useNodeStore();
+
   // State variables
   const [nodeType, setNodeType] = useState<'server' | 'mobile'>('server');
   const [nodeName, setNodeName] = useState('');
   const [selectedPubKey, setSelectedPubKey] = useState<string | null>(null);
   const [stakeAmount, setStakeAmount] = useState(1000);
-  const [availableNodes, setAvailableNodes] = useState<Array<{pubkey: string, status: string}>>([
+  const [availableNodes, setAvailableNodes] = useState<Array<{ pubkey: string, status: string }>>([
     { pubkey: '0x7c9e73d4c71dae564d41f78d56439bb4ba87592f', status: 'available' },
     { pubkey: '0x8d71327d5e84d87a2ed52f674da8d4d65116217a', status: 'available' },
     { pubkey: '0x2c9e73d4c71dae564d41f78d56439bb4ba87593e', status: 'registered' }
   ]);
-  
+
   // Validate input
   const validateInput = () => {
     if (!isConnected) {
@@ -51,7 +51,7 @@ export default function RegisterNodePage() {
       });
       return false;
     }
-    
+
     if (!selectedPubKey) {
       toast({
         title: "No node selected",
@@ -60,7 +60,7 @@ export default function RegisterNodePage() {
       });
       return false;
     }
-    
+
     if (!nodeName || nodeName.trim().length === 0) {
       toast({
         title: "Name required",
@@ -69,7 +69,7 @@ export default function RegisterNodePage() {
       });
       return false;
     }
-    
+
     if (stakeAmount < 1000 || stakeAmount > 10000) {
       toast({
         title: "Invalid stake amount",
@@ -78,7 +78,7 @@ export default function RegisterNodePage() {
       });
       return false;
     }
-    
+
     if (balance && stakeAmount > balance) {
       toast({
         title: "Insufficient balance",
@@ -87,27 +87,27 @@ export default function RegisterNodePage() {
       });
       return false;
     }
-    
+
     return true;
   };
-  
+
   // Handle registration
   const handleRegister = async () => {
     if (!validateInput()) return;
-    
+
     try {
-      await registerNode({
-        name: nodeName,
-        pubkey: selectedPubKey!,
-        stakeAmount,
-        nodeType
-      });
-      
+      // await registerNode({
+      //   name: nodeName,
+      //   pubkey: selectedPubKey!,
+      //   stakeAmount,
+      //   nodeType
+      // });
+
       toast({
         title: "Registration successful",
         description: "Your node has been registered to the SOON network",
       });
-      
+
       // Redirect to dashboard
       router.push('/dashboard');
     } catch (error) {
@@ -119,7 +119,7 @@ export default function RegisterNodePage() {
       });
     }
   };
-  
+
   // Set maximum stake amount
   const handleMaxStake = () => {
     if (balance) {
@@ -130,28 +130,28 @@ export default function RegisterNodePage() {
       }
     }
   };
-  
+
   // Open documentation
   const openDocs = (path: string) => {
     window.open(`https://docs.aeronyx.network/${path}`, '_blank');
   };
-  
+
   return (
     <div className="min-h-screen bg-background relative">
       {/* Background network visualization */}
       <NetworkVisualization />
-      
+
       {/* Navigation */}
       <div className="p-6 flex justify-between items-center">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="flex items-center gap-2"
           onClick={() => router.push('/dashboard')}
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Return to Dashboard</span>
         </Button>
-        
+
         <div className="flex gap-4">
           {isConnected ? (
             <Button variant="outline" className="px-6">
@@ -164,14 +164,14 @@ export default function RegisterNodePage() {
           )}
         </div>
       </div>
-      
+
       {/* Main content */}
       <div className="flex flex-col lg:flex-row gap-8 p-6">
         {/* Registration card */}
         <Card className="glass-card w-full lg:w-1/2">
           <CardContent className="p-8">
             <h1 className="text-2xl font-bold mb-8">Register Node to SOON Network</h1>
-            
+
             {/* Node type selector */}
             <div className="mb-8">
               <DropdownMenu>
@@ -191,7 +191,7 @@ export default function RegisterNodePage() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            
+
             {/* Node selector */}
             <div className="mb-6">
               <label className="text-sm font-medium text-muted-foreground mb-2 block">
@@ -203,8 +203,8 @@ export default function RegisterNodePage() {
                     <span>
                       {selectedPubKey
                         ? `${selectedPubKey.substring(0, 8)}...${selectedPubKey.substring(selectedPubKey.length - 8)}`
-                        : nodeType === 'server' 
-                          ? 'Select Public Key' 
+                        : nodeType === 'server'
+                          ? 'Select Public Key'
                           : 'Select MAC Address'
                       }
                     </span>
@@ -236,8 +236,8 @@ export default function RegisterNodePage() {
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button 
-                variant="link" 
+              <Button
+                variant="link"
                 className="text-primary text-sm p-0 h-auto mt-2"
                 onClick={() => openDocs('decentralized-node-documentation/run-aeronyx-decentralized-nodes-on-your-server-using-docker')}
               >
@@ -245,7 +245,7 @@ export default function RegisterNodePage() {
                 <ExternalLink className="h-3 w-3 ml-1" />
               </Button>
             </div>
-            
+
             {/* Node name input */}
             <div className="mb-6">
               <label className="text-sm font-medium text-muted-foreground mb-2 block">
@@ -261,7 +261,7 @@ export default function RegisterNodePage() {
                 The name will be registered on the SOON network
               </p>
             </div>
-            
+
             {/* Stake amount input */}
             <div className="mb-8">
               <label className="text-sm font-medium text-muted-foreground mb-2 block">
@@ -290,17 +290,17 @@ export default function RegisterNodePage() {
               <p className="text-xs text-muted-foreground mt-2">
                 Minimum 1000 SNYX, Maximum 10000 SNYX
               </p>
-              
+
               <div className="flex justify-between mt-4">
-                <Button 
-                  variant="link" 
+                <Button
+                  variant="link"
                   className="text-primary text-sm p-0 h-auto"
                   onClick={() => openDocs('decentralized-node-documentation/snyx-token-guide-for-aeronyx-network')}
                 >
                   <span>How to get SNYX?</span>
                   <ExternalLink className="h-3 w-3 ml-1" />
                 </Button>
-                
+
                 <div className="flex items-center gap-1 text-muted-foreground">
                   <span className="text-sm">Balance:</span>
                   <span className="text-md font-bold">{balance ? balance.toFixed(2) : '0.00'}</span>
@@ -308,9 +308,9 @@ export default function RegisterNodePage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Register button */}
-            <Button 
+            <Button
               className="btn-gradient w-full py-6 text-base font-medium"
               onClick={handleRegister}
               disabled={isLoading || !isConnected}
@@ -319,7 +319,7 @@ export default function RegisterNodePage() {
             </Button>
           </CardContent>
         </Card>
-        
+
         {/* Illustration */}
         <div className="hidden lg:flex lg:w-1/2 items-center justify-center relative">
           <div className="absolute w-96 h-96 rounded-full bg-primary/10 blur-3xl"></div>

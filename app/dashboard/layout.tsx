@@ -11,7 +11,7 @@ import Sidebar from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { MobileNav } from '@/components/layout/MobileNav';
-
+import MessageToast from "@/components/ui/messageToast";
 export default function DashboardLayout({
   children,
 }: {
@@ -30,6 +30,11 @@ export default function DashboardLayout({
 
   return (
     <div className="relative min-h-screen   bg-background">
+      {/* message */}
+      <MessageToast />
+
+
+
       <div className="animated-bg" />
 
       {/* Desktop Sidebar */}

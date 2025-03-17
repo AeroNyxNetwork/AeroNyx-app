@@ -1,3 +1,8 @@
+/*
+ * @Description: 
+ * @Date: 2025-03-13 10:57:54
+ * @LastEditTime: 2025-03-17 17:44:19
+ */
 'use client';
 
 import { useState } from 'react';
@@ -7,7 +12,8 @@ import {
   ArrowDown,
   ArrowUp,
   Circle,
-  Server
+  Server,
+  Copy
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -28,19 +34,31 @@ import {
 import { shortenAddress } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import NodeModal from '@/components/dashboard/NodeModal';
+import Image from 'next/image';
+import { size } from 'lodash';
+import { useNodeStore } from "@/store/nodeStore";
+import { CopyData } from "@/lib/utils"
+
+
+
+
 
 interface Node {
-  id: string;
-  name: string;
-  pubkey: string;
+  check_status: null;
+  check_update_time: null;
+  country: string;
   ip: string;
-  city?: string;
-  country?: string;
-  status: 'online' | 'offline';
-  staked: number;
-  earned: number;
+  earned_today: number;
+  name: string;
+  city: string;
+  node_type: number;
+  node_update_time: number;
   code: number;
-  passcode?: string;
+  offline: number;
+  number: number;
+  passcode: string;
+  port: string;
+  pubkey: string;
 }
 
 interface MyNodesTableProps {
@@ -52,13 +70,59 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
   const [isNodeModalOpen, setIsNodeModalOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [modalType, setModalType] = useState<'staking' | 'passcode' | 'edit'>('staking');
-  
+
   const handleNodeAction = (node: Node, action: 'staking' | 'passcode' | 'edit') => {
     setSelectedNode(node);
     setModalType(action);
     setIsNodeModalOpen(true);
   };
-  
+
+
+  // Points Earned
+  const CalculateBenefits = (key: string) => {
+    let BenefitsList = useNodeStore.getState().BenefitList
+    if (size(BenefitsList) > 0) {
+      let data = BenefitsList.filter((item: any) => item.pubkey == key)
+      return size(data) > 0 ? data[0].earned_today.toFixed(2) : "0.00"
+    } else {
+      return "0.00"
+    }
+
+  }
+  // Time Connected
+  const OnlineTime = (key: string) => {
+    let BenefitList = useNodeStore.getState().BenefitList
+    if (size(BenefitList) > 0) {
+      let data = BenefitList.filter((item: any) => item.pubkey == key)
+      if (size(data) > 0) {
+        let online_seconds = Number(data[0].online_seconds + data[0].online_seconds_today)
+        return (online_seconds / 3600).toFixed(1)
+      } else {
+        return 0
+      }
+    } else {
+      return 0
+    }
+  }
+
+  const Online = (key: string) => {
+    let BenefitList = useNodeStore.getState().BenefitList
+    if (size(BenefitList) > 0) {
+      let data = BenefitList.filter((item: any) => item.pubkey == key)
+      if (size(data) > 0) {
+        return data[0].offline == 0 ? "online" : "Not_online"
+      } else {
+        return "Not_online"
+      }
+    } else {
+      return "Not_online"
+    }
+  }
+
+
+
+
+
   // Create placeholder rows for loading state
   const placeholderRows = Array.from({ length: 4 }).map((_, index) => (
     <TableRow key={`placeholder-${index}`}>
@@ -78,6 +142,12 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
         <Skeleton className="h-5 w-16" />
       </TableCell>
       <TableCell>
+        <Skeleton className="h-5 w-16" />
+      </TableCell>
+      <TableCell>
+        <Skeleton className="h-5 w-16" />
+      </TableCell>
+      <TableCell>
         <Skeleton className="h-5 w-20" />
       </TableCell>
       <TableCell>
@@ -88,7 +158,7 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
       </TableCell>
     </TableRow>
   ));
-  
+
   return (
     <>
       <div className="overflow-x-auto">
@@ -98,11 +168,13 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
               <TableHead className="w-10"></TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Pubkey</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Staked</TableHead>
-              <TableHead>Earned</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>IP</TableHead>
+              <TableHead>City</TableHead>
+              <TableHead>Time Connected</TableHead>
+              <TableHead>On-chain</TableHead>
+              <TableHead>Staking</TableHead>
+              <TableHead>Password</TableHead>
+              <TableHead>Points Earned</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -119,81 +191,60 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
                 </TableCell>
               </TableRow>
             ) : (
-              nodes.map((node) => (
-                <TableRow key={node.id}>
+              nodes.map((node, index) => (
+                <TableRow key={index}>
                   <TableCell>
                     <div className="flex items-center justify-center">
-                      <Circle 
-                        className={`h-3 w-3 ${node.status === 'online' ? 'text-green-500 fill-green-500' : 'text-red-500 fill-red-500'}`} 
+                      <Circle
+                        className={`h-3 w-3 ${Online(node.pubkey) === 'online' ? 'text-green-500 fill-green-500' : 'text-red-500 fill-red-500'}`}
                       />
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">{node.name}</TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {shortenAddress(node.pubkey)}
+                  <TableCell className="font-mono text-xs  flex space-x-1">
+                    <div> {shortenAddress(node.pubkey)}</div>
+                    <div><Copy size="16" onClick={() => CopyData(node.pubkey)}></Copy></div>
                   </TableCell>
-                  <TableCell>
-                    {node.city ? `${node.city}, ${node.country}` : 'Unknown'}
+                  <TableCell className=" text-xs">
+                    {node.ip}
                   </TableCell>
-                  <TableCell>
-                    {node.staked.toLocaleString()} SNYX
+                  <TableCell className=" text-xs">
+                    {node.city}
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <span className="mr-1">{node.earned.toLocaleString()}</span>
-                      <Badge variant="outline" className="text-xs bg-primary bg-opacity-10 text-primary border-primary border-opacity-30">
-                        <ArrowUp className="mr-1 h-3 w-3" />
-                        2.3%
-                      </Badge>
-                    </div>
+                  <TableCell className=" text-xs">
+                    {OnlineTime(node.pubkey)} Hours
                   </TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={node.status === 'online' ? 'default' : 'secondary'}
-                      className={node.status === 'online' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}
-                    >
-                      {node.status === 'online' ? 'Online' : 'Offline'}
-                    </Badge>
+                  <TableCell className=" text-xs">
+                    {node.code == 0 ? "YES" : "NO"}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleNodeAction(node, 'staking')}>
-                          <ArrowUp className="mr-2 h-4 w-4" />
-                          Manage Stake
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleNodeAction(node, 'edit')}>
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Edit Name
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleNodeAction(node, 'passcode')}>
-                          <Server className="mr-2 h-4 w-4" />
-                          Set Passcode
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                  <TableCell className=" text-xs">
+                    {node.code == 0 ? node.number : 0} SNYX
                   </TableCell>
+                  <TableCell className=" text-xs">
+                    {node.passcode ? "YES" : "NO"}
+                  </TableCell>
+                  <TableCell className=" flex text-xs  space-x-2">
+                    <Image src="/aeronyx_logo1.png" alt="" width={20} height={20} />
+                    <div>{CalculateBenefits(node.pubkey)}</div>
+                  </TableCell>
+
+
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
       </div>
-      
+
       {/* Node Modal */}
-      {selectedNode && (
+      {/* {selectedNode && (
         <NodeModal
           isOpen={isNodeModalOpen}
           onClose={() => setIsNodeModalOpen(false)}
           node={selectedNode}
           type={modalType}
         />
-      )}
+      )} */}
     </>
   );
 }

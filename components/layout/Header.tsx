@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Bell,
   Menu,
@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useWallet } from '@/components/providers/WalletProvider';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -27,9 +28,9 @@ import UserIP from '@/components/dashboard/UserIP';
 import Logo from "@/components/layout/Logo"
 import GetSNYXTokens from "@/components/layout/GetSNYXTokens"
 import GetInvitationCode from "@/components/layout/GetInvitationCode"
-
-
-
+import { API_ENDPOINTS } from "@/components/api"
+import axios from 'axios';
+import { createWalletStore } from '@/store/walletStore';
 
 
 
@@ -41,12 +42,34 @@ interface HeaderProps {
 export function Header({ onMenuClick, showMenuButton = true }: HeaderProps) {
   const { isConnected, account, balance, connect, disconnect } = useWallet();
   const [showUserIP, setShowUserIP] = useState(true);
-
+  let [aeroNyxPubkey, setAeroNyxPubkey] = useState<string>("")
   // Format the wallet address for display
   const formatAddress = (address: string | null) => {
     if (!address) return '';
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
+
+
+  useEffect(() => {
+    getNodePubkey()
+  }, [])
+
+
+  const getNodePubkey = async () => {
+    let pubkey = "";
+    try {
+      const res = await axios.get(API_ENDPOINTS.MY_NODES_AUTH);
+      pubkey = res.data.result == 1 ? res.data.data.pubkey : "";
+    } catch (error) {
+      pubkey = "";
+    }
+    setAeroNyxPubkey(pubkey);
+    createWalletStore.getState().setMyNodePubkey(pubkey);
+  };
+
+
+
+
 
   return (
     <header className="glass-navbar w-full max-w-full p-4 border-b border-gray-800">
@@ -136,6 +159,19 @@ export function Header({ onMenuClick, showMenuButton = true }: HeaderProps) {
                 </div>
               </Button>
             )}
+
+            {
+              aeroNyxPubkey &&
+              <Button variant="outline" className="border-gray-700 text-white space-x-2  hidden  lg:flex" >
+                <Image src="/aeronyx_logo1.png" alt="" width={24} height={24} />
+                <div>
+                  {
+                    formatAddress(aeroNyxPubkey)
+                  }
+                </div>
+              </Button>
+            }
+
 
           </div>
 

@@ -24,21 +24,21 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
   const router = useRouter();
   const { toast } = useToast();
   const { isConnected, balance } = useWallet();
-  const { registerNode, isLoading } = useNodeStore();
-  
+  const { isLoading } = useNodeStore();
+
   // State variables
   const [nodeType, setNodeType] = useState<'server' | 'mobile'>('server');
   const [nodeName, setNodeName] = useState('');
   const [selectedPubKey, setSelectedPubKey] = useState<string | null>(null);
   const [stakeAmount, setStakeAmount] = useState(1000);
-  
+
   // Mock available nodes
   const availableNodes = [
     { pubkey: '0x7c9e73d4c71dae564d41f78d56439bb4ba87592f', status: 'available' },
     { pubkey: '0x8d71327d5e84d87a2ed52f674da8d4d65116217a', status: 'available' },
     { pubkey: '0x2c9e73d4c71dae564d41f78d56439bb4ba87593e', status: 'registered' }
   ];
-  
+
   // Validate input
   const validateInput = () => {
     if (!isConnected) {
@@ -49,7 +49,7 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
       });
       return false;
     }
-    
+
     if (!selectedPubKey) {
       toast({
         title: "No node selected",
@@ -58,7 +58,7 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
       });
       return false;
     }
-    
+
     if (!nodeName || nodeName.trim().length === 0) {
       toast({
         title: "Name required",
@@ -67,7 +67,7 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
       });
       return false;
     }
-    
+
     if (stakeAmount < 1000 || stakeAmount > 10000) {
       toast({
         title: "Invalid stake amount",
@@ -76,7 +76,7 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
       });
       return false;
     }
-    
+
     if (balance && stakeAmount > balance) {
       toast({
         title: "Insufficient balance",
@@ -85,32 +85,32 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
       });
       return false;
     }
-    
+
     return true;
   };
-  
+
   // Handle registration
   const handleRegister = async () => {
     if (!validateInput()) return;
-    
+
     try {
-      await registerNode({
-        name: nodeName,
-        pubkey: selectedPubKey!,
-        stakeAmount,
-        nodeType
-      });
-      
+      // await registerNode({
+      //   name: nodeName,
+      //   pubkey: selectedPubKey!,
+      //   stakeAmount,
+      //   nodeType
+      // });
+
       toast({
         title: "Registration successful",
         description: "Your node has been registered to the SOON network",
       });
-      
+
       // Reset form
       setNodeName('');
       setSelectedPubKey(null);
       setStakeAmount(1000);
-      
+
       // Call success callback if provided
       if (onSuccess) {
         onSuccess();
@@ -127,7 +127,7 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
       });
     }
   };
-  
+
   // Set maximum stake amount
   const handleMaxStake = () => {
     if (balance) {
@@ -138,16 +138,16 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
       }
     }
   };
-  
+
   // Open documentation
   const openDocs = (path: string) => {
     window.open(`https://docs.aeronyx.network/${path}`, '_blank');
   };
-  
+
   return (
     <div className={className}>
       <h2 className="text-xl font-bold mb-6">Register New Node</h2>
-      
+
       {/* Node type selector */}
       <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">
@@ -170,7 +170,7 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      
+
       {/* Node selector */}
       <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">
@@ -182,8 +182,8 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
               <span>
                 {selectedPubKey
                   ? `${selectedPubKey.substring(0, 8)}...${selectedPubKey.substring(selectedPubKey.length - 8)}`
-                  : nodeType === 'server' 
-                    ? 'Select Public Key' 
+                  : nodeType === 'server'
+                    ? 'Select Public Key'
                     : 'Select MAC Address'
                 }
               </span>
@@ -215,8 +215,8 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button 
-          variant="link" 
+        <Button
+          variant="link"
           className="text-primary text-sm p-0 h-auto mt-2"
           onClick={() => openDocs('decentralized-node-documentation/run-aeronyx-decentralized-nodes-on-your-server-using-docker')}
         >
@@ -224,7 +224,7 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
           <ExternalLink className="h-3 w-3 ml-1" />
         </Button>
       </div>
-      
+
       {/* Node name input */}
       <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">
@@ -240,7 +240,7 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
           The name will be registered on the SOON network
         </p>
       </div>
-      
+
       {/* Stake amount input */}
       <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">
@@ -269,17 +269,17 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
         <p className="text-xs text-muted-foreground mt-2">
           Minimum 1000 SNYX, Maximum 10000 SNYX
         </p>
-        
+
         <div className="flex justify-between mt-4">
-          <Button 
-            variant="link" 
+          <Button
+            variant="link"
             className="text-primary text-sm p-0 h-auto"
             onClick={() => openDocs('decentralized-node-documentation/snyx-token-guide-for-aeronyx-network')}
           >
             <span>How to get SNYX?</span>
             <ExternalLink className="h-3 w-3 ml-1" />
           </Button>
-          
+
           <div className="flex items-center gap-1 text-muted-foreground">
             <span className="text-sm">Balance:</span>
             <span className="text-md font-bold">{balance ? balance.toFixed(2) : '0.00'}</span>
@@ -287,9 +287,9 @@ export default function NodeRegistrationForm({ onSuccess, className }: NodeRegis
           </div>
         </div>
       </div>
-      
+
       {/* Register button */}
-      <Button 
+      <Button
         className="btn-gradient w-full py-6 text-base font-medium"
         onClick={handleRegister}
         disabled={isLoading || !isConnected}

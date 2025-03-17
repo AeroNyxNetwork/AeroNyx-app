@@ -47,7 +47,7 @@ export function Sidebar() {
         </div>
 
         {/* Register Node Button */}
-        <div className="px-3 mb-6">
+        {/* <div className="px-3 mb-6">
           <Button
             className="btn-gradient w-full py-2 flex items-center justify-center"
             onClick={() => router.push('/register-node')}
@@ -55,7 +55,7 @@ export function Sidebar() {
             <PlusCircle className="mr-2 h-4 w-4" />
             Register New Node
           </Button>
-        </div>
+        </div> */}
 
         {/* Navigation Items */}
         <nav className="flex-1 space-y-1 px-2">

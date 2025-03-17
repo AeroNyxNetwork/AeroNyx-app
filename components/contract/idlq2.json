@@ -1,0 +1,117 @@
+{
+  "version": "0.1.0",
+  "name": "token_faucet",
+  "instructions": [
+    {
+      "name": "initialize",
+      "accounts": [
+        { "name": "faucet", "isMut": true, "isSigner": false },
+        { "name": "senderTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "vault", "isMut": true, "isSigner": false },
+        { "name": "mint", "isMut": false, "isSigner": false },
+        { "name": "authority", "isMut": true, "isSigner": true },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false },
+        { "name": "associatedTokenProgram", "isMut": false, "isSigner": false },
+        { "name": "systemProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": [
+        { "name": "amountPerRequest", "type": "u64" },
+        { "name": "cooldownPeriod", "type": "i64" },
+        { "name": "total", "type": "u64" }
+      ]
+    },
+    {
+      "name": "updateFaucet",
+      "accounts": [
+        { "name": "faucet", "isMut": true, "isSigner": false },
+        { "name": "authority", "isMut": true, "isSigner": true }
+      ],
+      "args": [
+        { "name": "amountPerRequest", "type": "u64" },
+        { "name": "cooldownPeriod", "type": "i64" }
+      ]
+    },
+    {
+      "name": "closeFaucet",
+      "accounts": [
+        { "name": "faucet", "isMut": true, "isSigner": false },
+        { "name": "vault", "isMut": true, "isSigner": false },
+        { "name": "receiptTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "mint", "isMut": false, "isSigner": false },
+        { "name": "authority", "isMut": true, "isSigner": true },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false },
+        { "name": "associatedTokenProgram", "isMut": false, "isSigner": false },
+        { "name": "systemProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": []
+    },
+    {
+      "name": "requestTokens",
+      "accounts": [
+        { "name": "faucet", "isMut": true, "isSigner": false },
+        { "name": "vault", "isMut": true, "isSigner": false },
+        { "name": "user", "isMut": true, "isSigner": false },
+        { "name": "userTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "mint", "isMut": false, "isSigner": false },
+        { "name": "owner", "isMut": true, "isSigner": true },
+        { "name": "associatedTokenProgram", "isMut": false, "isSigner": false },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false },
+        { "name": "systemProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": []
+    },
+    {
+      "name": "removePda",
+      "accounts": [
+        { "name": "user", "isMut": true, "isSigner": false },
+        { "name": "owner", "isMut": true, "isSigner": true }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Faucet",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "mint", "type": "publicKey" },
+          { "name": "authority", "type": "publicKey" },
+          { "name": "amountPerRequest", "type": "u64" },
+          { "name": "cooldownPeriod", "type": "i64" },
+          { "name": "total", "type": "u64" },
+          { "name": "bump", "type": "u8" }
+        ]
+      }
+    },
+    {
+      "name": "User",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "initialized", "type": "bool" },
+          { "name": "owner", "type": "publicKey" },
+          { "name": "lastRequestTime", "type": "i64" },
+          { "name": "bump", "type": "u8" }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "CooldownNotPassed",
+      "msg": "Please wait 2 hours to collect again"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidMint",
+      "msg": "The provided mint does not match the specified mint."
+    },
+    {
+      "code": 6002,
+      "name": "NotEnoughToken",
+      "msg": "Faucet does not have enough tokens."
+    }
+  ]
+}

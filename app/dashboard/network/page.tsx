@@ -1,7 +1,7 @@
 /*
  * @Description: 
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-14 11:46:04
+ * @LastEditTime: 2025-03-17 18:11:02
  */
 'use client';
 
@@ -16,14 +16,14 @@ import MyNodesTable from '@/components/dashboard/MyNodesTable'; // Reuse the tab
 
 export default function NetworkPage() {
   const { isConnected } = useWallet();
-  const { fetchAllNodes, allNodes, isLoading } = useNodeStore();
+  const { allNodes, isLoading } = useNodeStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [queries, setQueries] = useState({ owner: "", name: "", serverkey: "" });
   useEffect(() => {
     if (isConnected) {
-      fetchAllNodes(currentPage);
+      // fetchAllNodes(currentPage);
     }
-  }, [isConnected, fetchAllNodes, currentPage]);
+  }, [isConnected, currentPage]);
 
   const handleChange = (field: string, value: string) => {
     setQueries((prev) => ({ ...prev, [field]: value }));

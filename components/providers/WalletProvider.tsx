@@ -18,9 +18,9 @@ const defaultContext: WalletContextType = {
   isConnecting: false,
   account: null,
   balance: null,
-  connect: async () => {},
-  disconnect: () => {},
-  getBalance: async () => {},
+  connect: async () => { },
+  disconnect: () => { },
+  getBalance: async () => { },
 };
 
 const WalletContext = createContext<WalletContextType>(defaultContext);
@@ -32,40 +32,40 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [account, setAccount] = useState<string | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
-  
+
   // Check if OKX wallet is available
   const checkOKXWallet = () => {
     // OKX wallet injects itself as 'okxwallet' in the window object
     return typeof window !== 'undefined' && window.okxwallet !== undefined;
   };
-  
+
   const connect = async () => {
     try {
       setIsConnecting(true);
-      
+
       // Check if OKX wallet is installed
       if (!checkOKXWallet()) {
         window.open('https://www.okx.com/web3', '_blank');
         setIsConnecting(false);
         return;
       }
-      
+
       // Make sure okxwallet exists before using it
       if (window.okxwallet) {
         // Request accounts from OKX wallet
-        const accounts = await window.okxwallet.request({ method: 'eth_requestAccounts' });
-        
+        const accounts = await window.okxwallet.request({ method: 'eth_requestAccounts' }); //eth_requestAccounts
+        console.log('first', accounts)
         if (accounts && accounts.length > 0) {
           const account = accounts[0];
           setAccount(account);
           setIsConnected(true);
-          
+
           // Store connection in Zustand store
           createWalletStore.getState().setWallet({
             account: account,
             isConnected: true
           });
-          
+
           // Get initial balance
           await getBalance();
         }
@@ -76,36 +76,36 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       setIsConnecting(false);
     }
   };
-  
+
   const disconnect = () => {
     setAccount(null);
     setBalance(null);
     setIsConnected(false);
-    
+
     // Update Zustand store
     createWalletStore.getState().disconnect();
   };
-  
+
   const getBalance = async () => {
     if (!account || !checkOKXWallet() || !window.okxwallet) return;
-    
+
     try {
       // Get ETH balance from OKX wallet
       const balanceHex = await window.okxwallet.request({
         method: 'eth_getBalance',
         params: [account, 'latest']
       });
-      
+
       // Convert hex balance to decimal (divide by 10^18 for ETH)
       const balanceWei = parseInt(balanceHex, 16);
       const balanceETH = balanceWei / 1e18;
-      
+
       setBalance(parseFloat(balanceETH.toFixed(4)));
     } catch (error) {
       console.error('Error fetching balance:', error);
     }
   };
-  
+
   // Check if wallet is already connected on mount
   useEffect(() => {
     const checkConnection = async () => {
@@ -122,20 +122,20 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         }
       }
     };
-    
+
     checkConnection();
   }, []);
-  
+
   return (
-    <WalletContext.Provider 
-      value={{ 
-        isConnected, 
-        isConnecting, 
-        account, 
-        balance, 
-        connect, 
-        disconnect, 
-        getBalance 
+    <WalletContext.Provider
+      value={{
+        isConnected,
+        isConnecting,
+        account,
+        balance,
+        connect,
+        disconnect,
+        getBalance
       }}
     >
       {children}
