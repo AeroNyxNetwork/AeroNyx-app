@@ -34,10 +34,19 @@ export function shortenAddress(address: string, chars: number = 4): string {
     address.length - chars
   )}`;
 }
-
+/**
+ * Copy Data
+ */
 export const CopyData = (data: string) => {
   copy(data);
   useToastStore.getState().showToast("success", "Copy Success");
+};
+
+/**
+ *Open Page
+ */
+export const OpenPage = (url: string) => {
+  window.open(url);
 };
 
 /**

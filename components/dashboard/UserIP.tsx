@@ -4,16 +4,64 @@ import { useState, useEffect } from 'react';
 import { Globe, X, Shield, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import DownloadModal from '@/components/dashboard/DownloadModal';
-
+import { API_ENDPOINTS } from "@/components/api"
+import axios from 'axios';
 interface UserIPProps {
   onClose?: () => void;
 }
 
 interface IPInfo {
   ip: string;
-  country: string;
-  city: string;
-  isp: string;
+  is_abuser: boolean;
+  is_bogon: boolean;
+  is_crawler: boolean;
+  is_datacenter: boolean;
+  is_mobile: boolean;
+  is_proxy: boolean;
+  is_satellite: boolean;
+  is_tor: boolean;
+  is_vpn: boolean;
+  elapsed_ms: number;
+  rir: string;
+
+  abuse?: {
+    name: string;
+    address: string;
+    email: string;
+    phone: string;
+  };
+
+  asn?: {
+    asn: number;
+    abuser_score: string;
+    route: string;
+    descr: string;
+    country: string;
+  };
+
+  company?: {
+    name: string;
+    abuser_score: string;
+    domain: string;
+    type: string;
+    network: string;
+  };
+
+  datacenter?: {
+    datacenter: string;
+    code: string;
+    city: string;
+    state: string;
+    country: string;
+  };
+
+  location?: {
+    is_eu_member: boolean;
+    calling_code: string;
+    currency_code: string;
+    continent: string;
+    country: string;
+  };
 }
 
 export default function UserIP({ onClose }: UserIPProps) {
@@ -22,29 +70,34 @@ export default function UserIP({ onClose }: UserIPProps) {
   const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   useEffect(() => {
-    const fetchIPInfo = async () => {
+    let isMounted = true;
+    const fetchIPData = async () => {
       try {
-        // In a real app, use a proper IP API like ipify or ipapi
-        // This is a mock implementation
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const mockIPInfo = {
-          ip: '192.168.1.' + Math.floor(Math.random() * 255),
-          country: 'United States',
-          city: 'New York',
-          isp: 'Example ISP'
-        };
-
-        setIpInfo(mockIPInfo);
+        const response = await fetch(`${API_ENDPOINTS.GET_MYNODE_CITY}/json/`);
+        const data = await response.json();
+        if (data.ip) {
+          const res = await axios.get(`${API_ENDPOINTS.API_DETAILS}?q=${data.ip}`);
+          if (isMounted) {
+            setIpInfo(res.data);
+          }
+        }
       } catch (error) {
-        console.error('Error fetching IP info:', error);
+        console.error("Error fetching IP info:", error);
       } finally {
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       }
     };
 
-    fetchIPInfo();
+    fetchIPData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
+
+
+
 
   return (
     <>
@@ -66,12 +119,12 @@ export default function UserIP({ onClose }: UserIPProps) {
 
 
                   <div className="text-xs sm:text-sm mb-1">
-                    <span className="text-gray-400">Location:</span> {ipInfo?.city}, {ipInfo?.country}
+                    <span className="text-gray-400">Location:</span> {ipInfo?.datacenter?.city}, {ipInfo?.datacenter?.country}
                   </div>
 
 
                   <div className="text-xs sm:text-sm mb-1">
-                    <span className="text-gray-400">Provider:</span> {ipInfo?.isp}
+                    <span className="text-gray-400">Provider:</span> {ipInfo?.abuse?.address}
                   </div>
                 </div>
               )}

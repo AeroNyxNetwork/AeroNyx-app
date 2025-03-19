@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { ArrowUpRight, Workflow, DollarSign, Activity, Server, PlusCircle } from 'lucide-react';
-import { useWallet } from '@/components/providers/WalletProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import NodeStatsCard from '@/components/dashboard/NodeStatsCard';
@@ -13,10 +12,14 @@ import NetworkVisualization from '@/components/dashboard/NetworkVisualization';
 import RegisterNodeModal from '@/components/dashboard/RegisterNodeModal';
 import { useNodeStore } from '@/store/nodeStore';
 import { useRouter } from 'next/navigation';
+import { createWalletStore } from "@/store/walletStore";
+import { useWallet } from "@solana/wallet-adapter-react";
+
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { isConnected } = useWallet();
+  const { wallet } = useWallet();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const {
     fetchMyNodes,
     myNodes,
@@ -27,16 +30,19 @@ export default function DashboardPage() {
   const [todayEarnings, setTodayEarnings] = useState(0);
 
   useEffect(() => {
-    // Fetch data when component mounts
-    if (isConnected) {
-      fetchMyNodes();
+    timeoutRef.current = setTimeout(() => {
+      const myNodePubkey = createWalletStore.getState().myNodePubkey;
+      if (myNodePubkey) {
+        fetchMyNodes(wallet);
+      }
+    }, 2000);
 
-
-      // Mock earnings data
-      setTotalEarnings(Math.random() * 2000);
-      setTodayEarnings(Math.random() * 50);
-    }
-  }, [isConnected, fetchMyNodes]);
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="space-y-8 relative">

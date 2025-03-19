@@ -3,6 +3,8 @@ import { API_ENDPOINTS } from "@/components/api";
 import axios from "axios";
 import { createWalletStore } from "@/store/walletStore";
 import { filter, size, update, sumBy } from "lodash";
+import { getMainAccountInfo } from "@/components/contract/getMainAccountInfo";
+import type { WalletAdapter } from "@solana/wallet-adapter-base";
 type Node = {
   check_status: null;
   check_update_time: null;
@@ -34,30 +36,12 @@ type NodeState = {
   myNodes: Node[];
   BenefitList: Node[];
   allNodes: Node[];
-  // selectedNode: Node | null;
   totalIncome: string | null;
   TotalDay: string | null;
   isLoading: boolean;
-  // networkStats: NetworkStats;
 
-  fetchMyNodes: () => Promise<void>;
-  // fetchAllNodes: (page: number, filters?: Record<string, any>) => Promise<void>;
-  // selectNode: (node: Node | null) => void;
-  // addNode: (node: Node) => Promise<void>;
-  // updateNode: (id: string, updates: Partial<Node>) => Promise<void>;
-  // deleteNode: (id: string) => Promise<void>;
-  // stakeOnNode: (id: string, amount: number) => Promise<void>;
-  // withdrawFromNode: (id: string, amount: number) => Promise<void>;
-  // fetchNetworkStats: () => Promise<void>;
+  fetchMyNodes: (wallet: any) => Promise<void>;
   fetchBenefitList: () => Promise<void>;
-
-  // Registration-related function
-  // registerNode: (nodeData: {
-  //   name: string;
-  //   pubkey: string;
-  //   stakeAmount: number;
-  //   nodeType: "server" | "mobile";
-  // }) => Promise<string>;
 };
 
 const getCityData = async (ip: string): Promise<string | null> => {
@@ -75,18 +59,11 @@ export const useNodeStore = create<NodeState>((set, get) => ({
   myNodes: [],
   BenefitList: [],
   allNodes: [],
-  // selectedNode: null,
   totalIncome: null,
   TotalDay: null,
   isLoading: true,
-  // networkStats: {
-  //   totalNodes: 0,
-  //   activeNodes: 0,
-  //   totalStaked: 0,
-  //   averageRewards: 0,
-  // },
 
-  fetchMyNodes: async () => {
+  fetchMyNodes: async (wallet: WalletAdapter) => {
     set({ isLoading: true });
     try {
       const res = await axios.get(API_ENDPOINTS.MY_NODES);
@@ -94,10 +71,12 @@ export const useNodeStore = create<NodeState>((set, get) => ({
       if (nodes && nodes.length > 0) {
         const nodeList = await Promise.all(
           nodes.map(async (node: Node) => {
-            const city = (await getCityData(node.ip)) || "Unknown";
+            const userCity = (await getCityData(node.ip)) || "Unknown";
+            let accountInfo = await getMainAccountInfo(node.pubkey, wallet);
             return {
               ...node,
-              city,
+              ...accountInfo,
+              city: userCity,
             };
           })
         );
@@ -114,7 +93,6 @@ export const useNodeStore = create<NodeState>((set, get) => ({
     set({ isLoading: true });
     try {
       const userKey = createWalletStore.getState().myNodePubkey;
-
       let List = await axios.get(
         `${API_ENDPOINTS.GET_BENEFIT_LIST}?pubkey=${userKey}`
       );

@@ -1,7 +1,7 @@
 /*
  * @Description: 
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-17 10:06:50
+ * @LastEditTime: 2025-03-19 14:40:01
  */
 'use client';
 
@@ -11,17 +11,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import MyNodesTable from '@/components/dashboard/MyNodesTable';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-import { useWallet } from '@/components/providers/WalletProvider';
+import { createWalletStore } from "@/store/walletStore";
 import { useRouter } from 'next/navigation';
 export default function NodesPage() {
-  const { isConnected } = useWallet();
   const { fetchMyNodes, myNodes, isLoading } = useNodeStore();
   const router = useRouter();
-  useEffect(() => {
-    if (isConnected) {
-      fetchMyNodes();
-    }
-  }, [isConnected, fetchMyNodes]);
 
   return (
     <div className="space-y-8">

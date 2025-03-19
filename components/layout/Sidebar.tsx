@@ -34,7 +34,6 @@ export function Sidebar() {
     { name: 'All Network Nodes', href: '/dashboard/network', icon: Layers },
     { name: 'Map', href: '/dashboard/map', icon: MapPin },
   ];
-  console.log('first', pathname)
   return (
     <div className="glass-sidebar w-72 overflow-y-auto py-4 px-3 z-50">
       <div className="flex flex-col h-full">

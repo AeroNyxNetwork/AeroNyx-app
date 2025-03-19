@@ -1,67 +1,34 @@
 /*
  * @Description:
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-17 14:09:04
+ * @LastEditTime: 2025-03-19 19:20:42
  */
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { getBalance } from "@/components/contract/getBalance";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
 
-type WalletState = {
-  wallet: {
-    account: string | null;
-    isConnected: boolean;
-  };
-  nodeData: string | null;
+interface NodeState {
+  balanceNumber: number | null;
   myNodePubkey: string | null;
-  walletBalance: number | null;
-  totalIncome: string | null;
-  totalDay: string | null;
-  nodelist: any[];
-  userKeyData: any[];
-
-  setWallet: (wallet: { account: string | null; isConnected: boolean }) => void;
-  disconnect: () => void;
-  setNodeData: (data: string) => void;
-  setWalletBalance: (balance: number) => void;
-  setTotalIncome: (income: string) => void;
-  setTotalDay: (day: string) => void;
+  fetchBalance: (publicKey: PublicKey | null) => void;
   setMyNodePubkey: (day: string) => void;
-  setNodelist: (list: any[]) => void;
-  setUserKeyData: (data: any[]) => void;
-};
+}
 
-export const createWalletStore = create<WalletState>()(
-  persist(
-    (set) => ({
-      wallet: {
-        account: null,
-        isConnected: false,
-      },
-      nodeData: null,
-      walletBalance: null,
-      totalIncome: null,
-      totalDay: null,
-      nodelist: [],
-      userKeyData: [],
-      myNodePubkey: null,
+export const createWalletStore = create<NodeState>((set, get) => ({
+  balanceNumber: 0,
+  myNodePubkey: null,
+  fetchBalance: async (publicKey: PublicKey | null) => {
+    if (!publicKey) return;
+    try {
+      let result = await getBalance(publicKey);
+      if (result.code === 0) {
+        set({ balanceNumber: result.number });
+      }
+    } catch (error) {}
+  },
 
-      setWallet: (wallet) => set({ wallet }),
-      disconnect: () =>
-        set({
-          wallet: { account: null, isConnected: false },
-        }),
-      setNodeData: (data) => set({ nodeData: data }),
-      setWalletBalance: (balance) => set({ walletBalance: balance }),
-      setTotalIncome: (income) => set({ totalIncome: income }),
-      setTotalDay: (day) => set({ totalDay: day }),
-      setNodelist: (list) => set({ nodelist: list }),
-      setUserKeyData: (data) => set({ userKeyData: data }),
-
-      // mynode
-      setMyNodePubkey: (key) => set({ myNodePubkey: key }),
-    }),
-    {
-      name: "aeronyx-wallet",
-    }
-  )
-);
+  // mynode
+  setMyNodePubkey: (key) => set({ myNodePubkey: key }),
+}));
