@@ -22,6 +22,7 @@ export default function DashboardPage() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const {
     fetchMyNodes,
+    fetchAllNetworkNodes,
     myNodes,
     isLoading
   } = useNodeStore();
@@ -34,6 +35,7 @@ export default function DashboardPage() {
       const myNodePubkey = createWalletStore.getState().myNodePubkey;
       if (myNodePubkey) {
         fetchMyNodes(wallet);
+
       }
     }, 2000);
 

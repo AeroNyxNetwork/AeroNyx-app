@@ -1,7 +1,7 @@
 /*
  * @Description: 
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-17 18:11:02
+ * @LastEditTime: 2025-03-21 16:48:14
  */
 'use client';
 
@@ -11,19 +11,28 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, X } from 'lucide-react';
-import { useWallet } from '@/components/providers/WalletProvider';
-import MyNodesTable from '@/components/dashboard/MyNodesTable'; // Reuse the table component temporarily
+import { useWallet } from "@solana/wallet-adapter-react";
+import AllNetworkNodesTable from '@/components/dashboard/AllNetworkNodesTable'; // Reuse the table component temporarily
+import { createWalletStore } from "@/store/walletStore"
+
+
 
 export default function NetworkPage() {
-  const { isConnected } = useWallet();
-  const { allNodes, isLoading } = useNodeStore();
+  const { publicKey } = useWallet();
+  const { allNetworkNodes, allNodesLoading, fetchAllNetworkNodes, allNodesOwner, allNodesServerKey, allNodesName } = useNodeStore();
   const [currentPage, setCurrentPage] = useState(1);
-  const [queries, setQueries] = useState({ owner: "", name: "", serverkey: "" });
+  const [queries, setQueries] = useState({ owner: "", name: "", serverkey: "", });
   useEffect(() => {
-    if (isConnected) {
-      // fetchAllNodes(currentPage);
-    }
-  }, [isConnected, currentPage]);
+
+    setTimeout(() => {
+      if (publicKey?.toString()) {
+        useNodeStore.getState().walletPublicKey = publicKey?.toString()
+        fetchAllNetworkNodes();
+        createWalletStore.getState().fetchBalance(publicKey)
+      }
+    }, 1000)
+
+  }, [publicKey?.toString()]);
 
   const handleChange = (field: string, value: string) => {
     setQueries((prev) => ({ ...prev, [field]: value }));
@@ -31,11 +40,18 @@ export default function NetworkPage() {
 
 
   const handleSearch = () => {
-    // onSearch(queries);
+    useNodeStore.getState().allNodesOwner = queries.owner
+    useNodeStore.getState().allNodesServerKey = queries.serverkey
+    useNodeStore.getState().allNodesName = queries.name
+    useNodeStore.getState().fetchAllNetworkNodes()
   };
 
   const handleClear = () => {
     setQueries({ owner: "", name: "", serverkey: "" });
+    useNodeStore.getState().allNodesOwner = null
+    useNodeStore.getState().allNodesServerKey = null
+    useNodeStore.getState().allNodesName = null
+    useNodeStore.getState().fetchAllNetworkNodes()
   };
 
 
@@ -105,7 +121,7 @@ export default function NetworkPage() {
           <CardTitle className="text-lg font-semibold">All Network Nodes</CardTitle>
         </CardHeader>
         <CardContent>
-          <MyNodesTable nodes={allNodes} isLoading={isLoading} />
+          <AllNetworkNodesTable nodes={allNetworkNodes} isLoading={allNodesLoading} />
         </CardContent>
       </Card>
     </div>

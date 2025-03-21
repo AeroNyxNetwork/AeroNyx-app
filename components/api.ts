@@ -5,4 +5,5 @@ export const API_ENDPOINTS = {
   GET_BENEFIT_LIST: "https://nodev2.aeronyx.network/v2/mining/node_list",
   API_DETAILS: "https://api.ipapi.is/",
   AERONYX_NETWORK: "https://api.aeronyx.network/api/v1/cms/init",
+  All_NETWORK_NODES: "https://nodev2.aeronyx.network/v2",
 };
