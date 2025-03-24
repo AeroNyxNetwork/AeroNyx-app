@@ -1,7 +1,7 @@
 /*
  * @Description:
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-21 18:58:13
+ * @LastEditTime: 2025-03-24 18:03:03
  */
 import { create } from "zustand";
 import { API_ENDPOINTS } from "@/components/api";
@@ -45,6 +45,7 @@ type Node = {
   online_seconds_today: number;
   port: string;
   pubkey: string;
+  contractName: string;
 };
 
 type NetworkStats = {
@@ -111,15 +112,16 @@ export const useNodeStore = create<NodeState>((set, get) => ({
       if (nodes && nodes.length > 0) {
         const nodeList = await Promise.all(
           nodes.map(async (node: Node) => {
-            const userCity = (await getCityData(node.ip)) || "Unknown";
+            const userCity = await getCityData(node.ip);
             let accountInfo = await getMainAccountInfo(node.pubkey, wallet);
             return {
               ...node,
               ...accountInfo,
-              city: userCity,
+              city: userCity || "Unknown",
             };
           })
         );
+        console.log("first", nodeList);
         set({ myNodes: nodeList });
       }
     } catch (error) {

@@ -1,8 +1,9 @@
 /*
  * @Description: 
  * @Date: 2025-03-17 17:03:05
- * @LastEditTime: 2025-03-17 17:23:09
+ * @LastEditTime: 2025-03-24 14:57:35
  */
+'use client';
 import { useEffect } from "react";
 import { CheckCircle, XCircle, AlertTriangle, X } from "lucide-react";
 import { useToastStore } from "@/store/useToastStore";

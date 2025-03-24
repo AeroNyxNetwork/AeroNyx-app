@@ -1,7 +1,7 @@
 /*
  * @Description: 
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-13 17:35:08
+ * @LastEditTime: 2025-03-24 14:58:07
  */
 'use client';
 
@@ -11,7 +11,7 @@ import Sidebar from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { MobileNav } from '@/components/layout/MobileNav';
-import MessageToast from "@/components/ui/messageToast";
+
 export default function DashboardLayout({
   children,
 }: {
@@ -31,7 +31,7 @@ export default function DashboardLayout({
   return (
     <div className="relative min-h-screen   bg-background">
       {/* message */}
-      <MessageToast />
+
 
 
 

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import {
   Bell,
   Menu,
+  ArrowLeft,
   X,
   Search,
   Twitter,
@@ -27,13 +28,15 @@ import {
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
 import dynamic from "next/dynamic";
-
+import { usePathname, useRouter } from 'next/navigation';
 interface HeaderProps {
   onMenuClick: () => void;
   showMenuButton?: boolean;
 }
 
 export function Header({ onMenuClick, showMenuButton = true }: HeaderProps) {
+  const pathname = usePathname();
+  const router = useRouter();
   const WalletMultiButtonDynamic = dynamic(
     async () =>
       (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -88,12 +91,25 @@ export function Header({ onMenuClick, showMenuButton = true }: HeaderProps) {
           )}
         </div>
         <div className="flex items-center justify-between w-full">
-          <div className="flex items-center space-x-2 ">
-            {!showMenuButton && <GetInvitationCode />}
-            <div className="hidden sm:block">
-              <GetSNYXTokens />
-            </div>
-          </div>
+          {
+            pathname !== "/register-node" ?
+              <div className="flex items-center space-x-2 ">
+                {!showMenuButton && <GetInvitationCode />}
+                <div className="hidden sm:block">
+                  <GetSNYXTokens />
+                </div>
+              </div>
+              :
+              <Button
+                variant="outline"
+                className="hidden sm:flex items-center gap-2 "
+                onClick={() => router.push('/dashboard')}
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Return to Dashboard</span>
+              </Button>
+          }
+
 
           <div className="flex items-center space-x-4">
             {/* Logo */}
@@ -157,11 +173,12 @@ export function Header({ onMenuClick, showMenuButton = true }: HeaderProps) {
           </div>
         </div>
       </div>
+
       <div className="block sm:hidden">
         <GetSNYXTokens />
       </div>
       {/* User IP Info Bar */}
-      {showUserIP && (
+      {showUserIP && pathname !== "/register-node" && (
         <div className="mt-4">
           <UserIP onClose={() => setShowUserIP(false)} />
         </div>

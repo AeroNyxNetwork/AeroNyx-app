@@ -1,11 +1,11 @@
 /*
  * @Description: 
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-19 14:40:01
+ * @LastEditTime: 2025-03-24 10:37:09
  */
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNodeStore } from '@/store/nodeStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import MyNodesTable from '@/components/dashboard/MyNodesTable';
@@ -13,10 +13,11 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { createWalletStore } from "@/store/walletStore";
 import { useRouter } from 'next/navigation';
+import { useWallet } from "@solana/wallet-adapter-react";
 export default function NodesPage() {
+  const { wallet } = useWallet();
   const { fetchMyNodes, myNodes, isLoading } = useNodeStore();
   const router = useRouter();
-
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between pt-4" >

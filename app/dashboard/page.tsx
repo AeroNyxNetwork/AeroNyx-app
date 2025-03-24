@@ -14,21 +14,24 @@ import { useNodeStore } from '@/store/nodeStore';
 import { useRouter } from 'next/navigation';
 import { createWalletStore } from "@/store/walletStore";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { size } from 'lodash';
 
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { wallet } = useWallet();
+  const { wallet, publicKey } = useWallet();
+  const { balanceNumber, fetchBalance, myNodePubkey } = createWalletStore();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const {
     fetchMyNodes,
     fetchAllNetworkNodes,
     myNodes,
+    totalIncome,
+    TotalDay,
     isLoading
   } = useNodeStore();
 
-  const [totalEarnings, setTotalEarnings] = useState(0);
-  const [todayEarnings, setTodayEarnings] = useState(0);
+
 
   useEffect(() => {
     timeoutRef.current = setTimeout(() => {
@@ -36,6 +39,9 @@ export default function DashboardPage() {
       if (myNodePubkey) {
         fetchMyNodes(wallet);
 
+      }
+      if (publicKey) {
+        fetchBalance(publicKey)
       }
     }, 2000);
 
@@ -59,13 +65,13 @@ export default function DashboardPage() {
         </div>
 
         {/* Register Node Button */}
-        <RegisterNodeModal />
+        {/* <RegisterNodeModal /> */}
       </div>
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <NodeStatsCard
           title="ALL Earnings"
-          value={myNodes.length.toString()}
+          value={(totalIncome ?? 0.00)}
           // description="Active nodes on the network"
           icon={Server}
           trend={{ value: 0, isPositive: true }}
@@ -74,7 +80,7 @@ export default function DashboardPage() {
 
         <NodeStatsCard
           title="Today's Earning"
-          value={`${totalEarnings.toFixed(2)}`}
+          value={(TotalDay ?? 0.00)}
           // description="Across all nodes"
           icon={DollarSign}
           // trend={{ value: 0, isPositive: true }}
@@ -83,7 +89,7 @@ export default function DashboardPage() {
 
         <NodeStatsCard
           title="SNYX"
-          value={`${todayEarnings.toFixed(2)}`}
+          value={(balanceNumber ?? 0.00)}
           // description="Last 24 hours"
           icon={Activity}
           trend={{ value: 0, isPositive: true }}
@@ -92,7 +98,7 @@ export default function DashboardPage() {
 
         <NodeStatsCard
           title="Nodes"
-          value={0}
+          value={size(myNodes)}
           // description="Nodes online time"
           icon={Workflow}
           trend={{ value: 0, isPositive: true }}

@@ -6,4 +6,7 @@ export const API_ENDPOINTS = {
   API_DETAILS: "https://api.ipapi.is/",
   AERONYX_NETWORK: "https://api.aeronyx.network/api/v1/cms/init",
   All_NETWORK_NODES: "https://nodev2.aeronyx.network/v2",
+  PASSCODE: "http://localhost:9804/set_passcode",
+  GET_MYPOINT_HISTORY:
+    "https://nodev2.aeronyx.network/v2/power/get_my_point_history",
 };

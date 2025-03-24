@@ -1,6 +1,5 @@
 'use client';
-
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
@@ -8,6 +7,7 @@ import {
   ExternalLink,
   AlertCircle,
   HelpCircle,
+  Loader,
   Server
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,114 +19,98 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useToast } from '@/components/ui/use-toast';
-import { useWallet } from '@/components/providers/WalletProvider';
+// import { useToast } from '@/components/ui/use-toast';
+import { useWallet } from "@solana/wallet-adapter-react";
 import NetworkVisualization from '@/components/dashboard/NetworkVisualization';
 import { useNodeStore } from '@/store/nodeStore';
+import { createWalletStore } from '@/store/walletStore';
+import { Header } from '@/components/layout/Header';
+import { size } from 'lodash';
+import { useToastStore } from "@/store/useToastStore";
+import { AddServer } from "@/components/contract/AddServer"
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function RegisterNodePage() {
+  const { balanceNumber, fetchBalance } = createWalletStore()
   const router = useRouter();
-  const { toast } = useToast();
-  const { isConnected, balance, connect } = useWallet();
-  const { isLoading } = useNodeStore();
-
+  const { wallet, publicKey } = useWallet();
+  const { isLoading, myNodes } = useNodeStore();
+  const isMobile = useMediaQuery('(max-width: 1024px)');
   // State variables
   const [nodeType, setNodeType] = useState<'server' | 'mobile'>('server');
   const [nodeName, setNodeName] = useState('');
   const [selectedPubKey, setSelectedPubKey] = useState<string | null>(null);
   const [stakeAmount, setStakeAmount] = useState(1000);
-  const [availableNodes, setAvailableNodes] = useState<Array<{ pubkey: string, status: string }>>([
-    { pubkey: '0x7c9e73d4c71dae564d41f78d56439bb4ba87592f', status: 'available' },
-    { pubkey: '0x8d71327d5e84d87a2ed52f674da8d4d65116217a', status: 'available' },
-    { pubkey: '0x2c9e73d4c71dae564d41f78d56439bb4ba87593e', status: 'registered' }
-  ]);
+  const [addNetworkLoading, setAddNetworkLoading] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Validate input
-  const validateInput = () => {
-    if (!isConnected) {
-      toast({
-        title: "Wallet not connected",
-        description: "Please connect your wallet first",
-        variant: "destructive"
-      });
-      return false;
+  useLayoutEffect(() => {
+    if (publicKey) {
+      createWalletStore.getState().fetchBalance(publicKey)
     }
-
-    if (!selectedPubKey) {
-      toast({
-        title: "No node selected",
-        description: "Please select a node to register",
-        variant: "destructive"
-      });
-      return false;
-    }
-
-    if (!nodeName || nodeName.trim().length === 0) {
-      toast({
-        title: "Name required",
-        description: "Please enter a name for your node",
-        variant: "destructive"
-      });
-      return false;
-    }
-
-    if (stakeAmount < 1000 || stakeAmount > 10000) {
-      toast({
-        title: "Invalid stake amount",
-        description: "Stake amount must be between 1000 and 10000 SNYX",
-        variant: "destructive"
-      });
-      return false;
-    }
-
-    if (balance && stakeAmount > balance) {
-      toast({
-        title: "Insufficient balance",
-        description: `You need at least ${stakeAmount} SNYX to stake`,
-        variant: "destructive"
-      });
-      return false;
-    }
-
-    return true;
-  };
+  }, [publicKey])
 
   // Handle registration
   const handleRegister = async () => {
-    if (!validateInput()) return;
+    const toast = useToastStore.getState().showToast;
+    const pubKeyRegex = /^[A-Za-z0-9]{1,130}$/;
 
-    try {
-      // await registerNode({
-      //   name: nodeName,
-      //   pubkey: selectedPubKey!,
-      //   stakeAmount,
-      //   nodeType
-      // });
-
-      toast({
-        title: "Registration successful",
-        description: "Your node has been registered to the SOON network",
-      });
-
-      // Redirect to dashboard
-      router.push('/dashboard');
-    } catch (error) {
-      console.error('Error registering node:', error);
-      toast({
-        title: "Registration failed",
-        description: "There was an error registering your node. Please try again.",
-        variant: "destructive"
-      });
+    // Validate Public Key
+    if (!selectedPubKey || size(selectedPubKey) < 1) {
+      toast("error", "No PubKey available to activate");
+      return;
     }
+    if (!pubKeyRegex.test(selectedPubKey)) {
+      toast("error", "Please enter the correct PublicKey");
+      return;
+    }
+
+    // Validate node name
+    if (!nodeName || size(nodeName) < 1) {
+      toast("error", "Please enter a name");
+      return;
+    }
+
+    // Validate stake amount against balance
+    if (stakeAmount > (balanceNumber ?? 0)) {
+      toast("error", "Insufficient pledged coins");
+      return;
+    }
+
+    // Validate stake amount within allowed range
+    if (stakeAmount < 1000 || stakeAmount > 10000) {
+      toast("error", "The pledged SNYX must be greater than 1000 and less than 10000");
+      return;
+    }
+
+    // Validate wallet connection
+    if (!wallet) {
+      toast("error", "Please link your wallet first");
+      return;
+    }
+    setAddNetworkLoading(true)
+
+    const result = await AddServer(nodeName, stakeAmount, selectedPubKey, wallet, publicKey);
+    if (result.code === "success") {
+      toast("success", "success")
+      router.push('/dashboard')
+      setNodeName("")
+      setSelectedPubKey(null)
+      setStakeAmount(1000)
+    } else {
+      toast("error", result.msg)
+    }
+    setAddNetworkLoading(false)
+
   };
 
   // Set maximum stake amount
   const handleMaxStake = () => {
-    if (balance) {
-      if (balance > 10000) {
+    if (balanceNumber) {
+      if ((balanceNumber ?? 0) > 10000) {
         setStakeAmount(10000);
       } else {
-        setStakeAmount(balance);
+        setStakeAmount((balanceNumber ?? 0));
       }
     }
   };
@@ -141,30 +125,10 @@ export default function RegisterNodePage() {
       {/* Background network visualization */}
       <NetworkVisualization />
 
-      {/* Navigation */}
-      <div className="p-6 flex justify-between items-center">
-        <Button
-          variant="outline"
-          className="flex items-center gap-2"
-          onClick={() => router.push('/dashboard')}
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Return to Dashboard</span>
-        </Button>
-
-        <div className="flex gap-4">
-          {isConnected ? (
-            <Button variant="outline" className="px-6">
-              <span className="font-mono">Balance: {balance?.toFixed(2)} SNYX</span>
-            </Button>
-          ) : (
-            <Button onClick={connect} className="btn-gradient">
-              Connect Wallet
-            </Button>
-          )}
-        </div>
-      </div>
-
+      <Header
+        onMenuClick={() => setIsSidebarOpen(prev => !prev)}
+        showMenuButton={isMobile}
+      ></Header>
       {/* Main content */}
       <div className="flex flex-col lg:flex-row gap-8 p-6">
         {/* Registration card */}
@@ -212,19 +176,19 @@ export default function RegisterNodePage() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-full max-h-60 overflow-y-auto">
-                  {availableNodes.length > 0 ? (
-                    availableNodes.map((node, index) => (
+                  {size(myNodes) > 0 ? (
+                    myNodes.map((node, index) => (
                       <DropdownMenuItem
                         key={index}
-                        disabled={node.status === 'registered'}
-                        onClick={() => node.status === 'available' && setSelectedPubKey(node.pubkey)}
+                        disabled={node.code === 0}
+                        onClick={() => node.code === 1 && setSelectedPubKey(node.pubkey)}
                       >
-                        <div className="flex justify-between w-full items-center">
+                        <div className="flex justify-between w-full items-center ">
                           <span className="font-mono">
                             {`${node.pubkey.substring(0, 8)}...${node.pubkey.substring(node.pubkey.length - 8)}`}
                           </span>
-                          <span className={node.status === 'available' ? 'text-green-400' : 'text-red-400'}>
-                            {node.status === 'available' ? 'Available' : 'Already registered'}
+                          <span className={node.code === 1 ? 'text-green-400' : 'text-red-400'}>
+                            {node.code === 1 ? 'Available' : 'Already registered'}
                           </span>
                         </div>
                       </DropdownMenuItem>
@@ -282,7 +246,7 @@ export default function RegisterNodePage() {
                   size="sm"
                   onClick={handleMaxStake}
                   className="h-8 text-xs"
-                  disabled={!balance}
+                  disabled={(balanceNumber ?? 0) < 1000}
                 >
                   MAX
                 </Button>
@@ -303,7 +267,7 @@ export default function RegisterNodePage() {
 
                 <div className="flex items-center gap-1 text-muted-foreground">
                   <span className="text-sm">Balance:</span>
-                  <span className="text-md font-bold">{balance ? balance.toFixed(2) : '0.00'}</span>
+                  <span className="text-md font-bold">{balanceNumber ? balanceNumber.toFixed(2) : '0.00'}</span>
                   <span className="text-sm">SNYX</span>
                 </div>
               </div>
@@ -313,9 +277,10 @@ export default function RegisterNodePage() {
             <Button
               className="btn-gradient w-full py-6 text-base font-medium"
               onClick={handleRegister}
-              disabled={isLoading || !isConnected}
+            // disabled={isLoading || !isConnected}
             >
-              {isLoading ? 'Processing...' : 'Register to SOON Network'}
+
+              {addNetworkLoading ? <Loader className="w-5 h-5 animate-spin" /> : 'Register to SOON Network'}
             </Button>
           </CardContent>
         </Card>

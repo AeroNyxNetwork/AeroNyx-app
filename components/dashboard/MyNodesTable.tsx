@@ -1,7 +1,7 @@
 /*
  * @Description: 
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-17 17:44:19
+ * @LastEditTime: 2025-03-24 18:05:45
  */
 'use client';
 
@@ -38,7 +38,9 @@ import Image from 'next/image';
 import { size } from 'lodash';
 import { useNodeStore } from "@/store/nodeStore";
 import { CopyData } from "@/lib/utils"
-
+import PasswordDialog from "@/components/contractModal/Password"
+import MyNodesName from "@/components/contractModal/MyNodesName"
+import MyNodesStaking from "@/components/contractModal/MyNodesStaking"
 
 
 
@@ -59,6 +61,7 @@ interface Node {
   passcode: string;
   port: string;
   pubkey: string;
+  contractName: string;
 }
 
 interface MyNodesTableProps {
@@ -66,16 +69,28 @@ interface MyNodesTableProps {
   isLoading?: boolean;
 }
 
-export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableProps) {
-  const [isNodeModalOpen, setIsNodeModalOpen] = useState(false);
-  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const [modalType, setModalType] = useState<'staking' | 'passcode' | 'edit'>('staking');
+interface Passcode {
+  key: string,
+  isOpen: boolean
+}
 
-  const handleNodeAction = (node: Node, action: 'staking' | 'passcode' | 'edit') => {
-    setSelectedNode(node);
-    setModalType(action);
-    setIsNodeModalOpen(true);
-  };
+
+
+
+export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableProps) {
+  const [isPasscode, setisPasscode] = useState<Passcode>({
+    key: "",
+    isOpen: false
+  });
+  const [isNodesName, setIsNodesName] = useState<Passcode>({
+    key: "",
+    isOpen: false
+  });
+
+  const [isMyNodesStaking, setIsMyNodesStaking] = useState<Passcode>({
+    key: "",
+    isOpen: false
+  });
 
 
   // Points Earned
@@ -118,10 +133,6 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
       return "Not_online"
     }
   }
-
-
-
-
 
   // Create placeholder rows for loading state
   const placeholderRows = Array.from({ length: 4 }).map((_, index) => (
@@ -200,7 +211,14 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
                       />
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">{node.name}</TableCell>
+                  <TableCell className="font-medium cursor-pointer"
+                    onClick={() => node.code == 0 && setIsNodesName({
+                      key: node.pubkey,
+                      isOpen: true
+                    })}
+                  >
+                    {node.contractName ? node.contractName : node.name}
+                  </TableCell>
                   <TableCell className="font-mono text-xs  flex space-x-1">
                     <div> {shortenAddress(node.pubkey)}</div>
                     <div><Copy size="16" onClick={() => CopyData(node.pubkey)}></Copy></div>
@@ -217,10 +235,17 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
                   <TableCell className=" text-xs">
                     {node.code == 0 ? "YES" : "NO"}
                   </TableCell>
-                  <TableCell className=" text-xs">
+                  <TableCell className=" text-xs cursor-pointer"
+                    onClick={() => setIsMyNodesStaking({
+                      key: node.pubkey,
+                      isOpen: true
+                    })}  >
                     {node.code == 0 ? node.number : 0} SNYX
                   </TableCell>
-                  <TableCell className=" text-xs">
+                  <TableCell className="text-xs cursor-pointer" onClick={() => setisPasscode({
+                    key: node.pubkey,
+                    isOpen: true
+                  })}  >
                     {node.passcode ? "YES" : "NO"}
                   </TableCell>
                   <TableCell className=" flex text-xs  space-x-2">
@@ -237,14 +262,33 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
       </div>
 
       {/* Node Modal */}
-      {/* {selectedNode && (
-        <NodeModal
-          isOpen={isNodeModalOpen}
-          onClose={() => setIsNodeModalOpen(false)}
-          node={selectedNode}
-          type={modalType}
+      {isPasscode && (
+        <PasswordDialog
+          isOpen={isPasscode}
+          onClose={() => setisPasscode({
+            key: "",
+            isOpen: false
+          })}
         />
-      )} */}
+      )}
+      {isNodesName && (
+        <MyNodesName
+          isOpen={isNodesName}
+          onClose={() => setIsNodesName({
+            key: "",
+            isOpen: false
+          })}
+        />
+      )}
+      {isMyNodesStaking && (
+        <MyNodesStaking
+          isOpen={isMyNodesStaking}
+          onClose={() => setIsMyNodesStaking({
+            key: "",
+            isOpen: false
+          })}
+        />
+      )}
     </>
   );
 }
