@@ -1,3 +1,8 @@
+/*
+ * @Description:
+ * @Date: 2025-03-19 13:01:25
+ * @LastEditTime: 2025-03-25 11:06:35
+ */
 import * as anchor from "@project-serum/anchor";
 import { Connection, PublicKey } from "@solana/web3.js";
 import idl from "./idl.json";
@@ -21,7 +26,6 @@ export async function getBalance(publicKey: PublicKey) {
     const tokenAccountAddress = getAssociatedTokenAddressSync(mint, publicKey);
 
     const tokenAccount = await getAccount(connection, tokenAccountAddress);
-    console.log("first", tokenAccount);
     return {
       code: 0,
       number: new BN(tokenAccount.amount).toNumber() / 1e9,

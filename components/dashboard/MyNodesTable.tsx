@@ -1,7 +1,7 @@
 /*
  * @Description: 
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-24 18:05:45
+ * @LastEditTime: 2025-03-25 10:42:17
  */
 'use client';
 
@@ -193,7 +193,7 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
               placeholderRows
             ) : nodes.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center">
+                <TableCell colSpan={12} className="h-24 text-center">
                   <div className="flex flex-col items-center justify-center text-muted-foreground">
                     <Server className="h-10 w-10 mb-2 opacity-40" />
                     <p>No nodes found</p>

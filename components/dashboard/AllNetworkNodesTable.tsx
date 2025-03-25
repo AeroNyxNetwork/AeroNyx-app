@@ -1,7 +1,7 @@
 /*
  * @Description: 
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-21 18:46:40
+ * @LastEditTime: 2025-03-25 10:52:22
  */
 'use client';
 
@@ -180,7 +180,7 @@ export default function MyNodesTable({ nodes, isLoading = false }: MyNodesTableP
       </div>
 
       {
-        allNodesTotalList > 1 &&
+        allNodesTotalList > 1 && !isLoading &&
         <Pagination
           totalPages={allNodesTotalList}
           currentPage={allNodesPagination}

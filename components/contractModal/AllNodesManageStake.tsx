@@ -3,7 +3,7 @@
 /*
  * @Description: 
  * @Date: 2025-03-19 09:55:55
- * @LastEditTime: 2025-03-21 18:47:27
+ * @LastEditTime: 2025-03-25 12:01:45
  */
 'use client';
 
@@ -57,6 +57,7 @@ export default function AllNodesManageStake({ isOpen, onClose, clickData }: Down
     ): Promise<void> => {
         setLoading(true);
         const result = await operation();
+        console.log('result', result)
         if (result.code === "success") {
             useNodeStore.getState().fetchAllNetworkNodes();
             useToastStore.getState().showToast("success", "success");
@@ -64,7 +65,7 @@ export default function AllNodesManageStake({ isOpen, onClose, clickData }: Down
             onClose();
             setLoading(false);
         } else {
-            useToastStore.getState().showToast("error", result.msg);
+            useToastStore.getState().showToast("error", "error");
             setLoading(false);
         }
 
@@ -138,7 +139,7 @@ export default function AllNodesManageStake({ isOpen, onClose, clickData }: Down
                     <Button
                         variant="outline"
                         onClick={() => Deposis()}
-                        className="sm:w-auto mx-auto md:mx-0  btn-gradient group relative overflow-hidden flex items-center gap-2 px-5 py-2.5 w-full sm:w-auto mt-4 sm:mt-0"
+                        className="w-200 sm:w-auto mx-auto md:mx-0  btn-gradient group relative overflow-hidden flex items-center gap-2 px-5 py-2.5 w-full sm:w-auto mt-4 sm:mt-0"
                         style={{ width: '200px' }}
                         disabled={deposisLoading || withdrawisLoading}
                     >

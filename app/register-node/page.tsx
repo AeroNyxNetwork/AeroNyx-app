@@ -29,13 +29,13 @@ import { size } from 'lodash';
 import { useToastStore } from "@/store/useToastStore";
 import { AddServer } from "@/components/contract/AddServer"
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-
 export default function RegisterNodePage() {
-  const { balanceNumber, fetchBalance } = createWalletStore()
+  const { balanceNumber, fetchBalance, myNodePubkey } = createWalletStore()
   const router = useRouter();
   const { wallet, publicKey } = useWallet();
   const { isLoading, myNodes } = useNodeStore();
   const isMobile = useMediaQuery('(max-width: 1024px)');
+
   // State variables
   const [nodeType, setNodeType] = useState<'server' | 'mobile'>('server');
   const [nodeName, setNodeName] = useState('');
@@ -43,12 +43,23 @@ export default function RegisterNodePage() {
   const [stakeAmount, setStakeAmount] = useState(1000);
   const [addNetworkLoading, setAddNetworkLoading] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+  const { fetchMyNodes } = useNodeStore();
   useLayoutEffect(() => {
     if (publicKey) {
       createWalletStore.getState().fetchBalance(publicKey)
     }
   }, [publicKey])
+
+  useEffect(() => {
+    if (myNodePubkey && wallet) {
+      fetchMyNodes(wallet);
+    } else {
+      useNodeStore.getState().isLoading = false
+    }
+  }, [wallet, myNodePubkey]);
+
+
+
 
   // Handle registration
   const handleRegister = async () => {

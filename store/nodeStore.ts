@@ -1,7 +1,7 @@
 /*
  * @Description:
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-24 18:03:03
+ * @LastEditTime: 2025-03-25 11:05:49
  */
 import { create } from "zustand";
 import { API_ENDPOINTS } from "@/components/api";
@@ -121,7 +121,6 @@ export const useNodeStore = create<NodeState>((set, get) => ({
             };
           })
         );
-        console.log("first", nodeList);
         set({ myNodes: nodeList });
       }
     } catch (error) {
@@ -147,7 +146,7 @@ export const useNodeStore = create<NodeState>((set, get) => ({
     } finally {
       setTimeout(() => {
         set({ isLoading: false });
-      }, 3000);
+      }, 2000);
     }
   },
 

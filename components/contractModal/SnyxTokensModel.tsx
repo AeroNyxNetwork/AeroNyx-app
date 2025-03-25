@@ -1,7 +1,7 @@
 /*
  * @Description: 
  * @Date: 2025-03-19 09:55:55
- * @LastEditTime: 2025-03-19 19:03:39
+ * @LastEditTime: 2025-03-25 11:11:29
  */
 'use client';
 
@@ -21,7 +21,7 @@ import { shortenAddress, OpenPage } from "@/lib/utils"
 import { GetSNYXTokens } from "@/components/contract/getSNYXTokens"
 import { useToastStore } from "@/store/useToastStore";
 import { createWalletStore } from "@/store/walletStore"
-
+import { Loader } from "lucide-react";
 
 interface DownloadModalProps {
     isOpen: boolean;
@@ -30,16 +30,19 @@ interface DownloadModalProps {
 
 export default function SnyxTokensModel({ isOpen, onClose }: DownloadModalProps) {
     const { publicKey, wallet } = useWallet();
-
+    const [confirmisLoading, setConfirmisLoading] = useState<boolean>(false)
 
     const Confirm = async (): Promise<void> => {
+        setConfirmisLoading(true)
         const result = await GetSNYXTokens(wallet, publicKey); // Call the token request function
         if (result.code === "success") {
             useToastStore.getState().showToast("success", "success");
             createWalletStore.getState().fetchBalance(publicKey)
             onClose()
+            setConfirmisLoading(false)
         } else {
             useToastStore.getState().showToast("error", result.msg);
+            setConfirmisLoading(false)
         }
     };
 
@@ -80,8 +83,9 @@ export default function SnyxTokensModel({ isOpen, onClose }: DownloadModalProps)
                         className="btn-gradient group relative overflow-hidden flex items-center gap-2 px-5 py-2.5 w-full sm:w-auto
                           mt-4 sm:mt-0 "
                         style={{ width: '200px' }}
+                        disabled={confirmisLoading}
                     >
-                        Confirm
+                        {confirmisLoading ? <Loader className="w-5 h-5 animate-spin" /> : "Confirm"}
                     </Button>
 
                 </div>

@@ -1,7 +1,7 @@
 /*
  * @Description: 
  * @Date: 2025-03-13 10:57:54
- * @LastEditTime: 2025-03-24 10:37:09
+ * @LastEditTime: 2025-03-25 10:46:53
  */
 'use client';
 
@@ -15,9 +15,29 @@ import { createWalletStore } from "@/store/walletStore";
 import { useRouter } from 'next/navigation';
 import { useWallet } from "@solana/wallet-adapter-react";
 export default function NodesPage() {
-  const { wallet } = useWallet();
   const { fetchMyNodes, myNodes, isLoading } = useNodeStore();
   const router = useRouter();
+  const { balanceNumber, fetchBalance, myNodePubkey } = createWalletStore();
+  const { wallet, publicKey } = useWallet();
+  useEffect(() => {
+    if (publicKey) {
+      fetchBalance(publicKey)
+    }
+  }, [publicKey])
+
+  useEffect(() => {
+    const myNodePubkey = createWalletStore.getState().myNodePubkey;
+    if (myNodePubkey && wallet) {
+      fetchMyNodes(wallet);
+    } else {
+      useNodeStore.getState().isLoading = false
+    }
+  }, [wallet, myNodePubkey]);
+
+
+
+
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between pt-4" >

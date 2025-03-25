@@ -103,7 +103,6 @@ const GoogleMapChart = () => {
     useEffect(() => {
         axios.get("https://nodev2.aeronyx.network/v2/citys")
             .then((res: any) => {
-                console.log('res', res)
                 let arr: any = []
                 let arr1: any = []
                 res.data.forEach((item: any, index: number) => {

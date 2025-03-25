@@ -114,17 +114,18 @@ export default function UserIP({ onClose }: UserIPProps) {
               ) : (
                 <div className="flex flex-col sm:flex-row sm:space-x-4 ">
                   <div className="text-xs sm:text-sm mb-1">
-                    <span className="text-gray-400">IP:</span> {ipInfo?.ip}
+                    <span className="text-gray-400">IP:</span> {ipInfo?.ip || "Unknown"}
                   </div>
 
 
                   <div className="text-xs sm:text-sm mb-1">
-                    <span className="text-gray-400">Location:</span> {ipInfo?.datacenter?.city}, {ipInfo?.datacenter?.country}
+                    <span className="text-gray-400">Location:</span>
+                    {ipInfo?.datacenter?.city || "Unknown"}, {ipInfo?.datacenter?.country || "Unknown"}
                   </div>
 
 
                   <div className="text-xs sm:text-sm mb-1">
-                    <span className="text-gray-400">Provider:</span> {ipInfo?.abuse?.address}
+                    <span className="text-gray-400">Provider:</span> {ipInfo?.abuse?.address || "Unknown"}
                   </div>
                 </div>
               )}

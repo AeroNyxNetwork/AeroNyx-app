@@ -1,3 +1,8 @@
+/*
+ * @Description: 
+ * @Date: 2025-03-21 10:03:31
+ * @LastEditTime: 2025-03-25 10:54:19
+ */
 import React from "react";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,7 +36,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange }: PaginationProps) 
                 key={index}
                 id={currentPage === page ? "" : "allStakingButton"}
                 size="sm"
-                className={`mx-1 rounded-lg ${currentPage === page ? "bg-white text-black" : ""}`}
+                className={`w-8 h-8 mx-1 rounded-lg ${currentPage === page ? "bg-white text-black" : ""}`}
                 onClick={() => typeof page === "number" && onPageChange(page)}
                 disabled={page === "dots"}
             >

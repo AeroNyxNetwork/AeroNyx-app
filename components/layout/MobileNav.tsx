@@ -26,7 +26,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'My Nodes', href: '/dashboard/nodes', icon: Server },
+  // { name: 'My Nodes', href: '/dashboard/nodes', icon: Server },
   { name: 'All Network Nodes', href: '/dashboard/network', icon: Layers },
 ];
 

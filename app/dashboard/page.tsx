@@ -31,26 +31,20 @@ export default function DashboardPage() {
     isLoading
   } = useNodeStore();
 
-
+  useEffect(() => {
+    if (publicKey) {
+      fetchBalance(publicKey)
+    }
+  }, [publicKey])
 
   useEffect(() => {
-    timeoutRef.current = setTimeout(() => {
-      const myNodePubkey = createWalletStore.getState().myNodePubkey;
-      if (myNodePubkey) {
-        fetchMyNodes(wallet);
-
-      }
-      if (publicKey) {
-        fetchBalance(publicKey)
-      }
-    }, 2000);
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
+    const myNodePubkey = createWalletStore.getState().myNodePubkey;
+    if (myNodePubkey && wallet) {
+      fetchMyNodes(wallet);
+    } else {
+      useNodeStore.getState().isLoading = false
+    }
+  }, [wallet, myNodePubkey]);
 
   return (
     <div className="space-y-8 relative">
@@ -69,23 +63,28 @@ export default function DashboardPage() {
       </div>
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <NodeStatsCard
-          title="ALL Earnings"
-          value={(totalIncome ?? 0.00)}
-          // description="Active nodes on the network"
-          icon={Server}
-          trend={{ value: 0, isPositive: true }}
-          loading={isLoading}
-        />
+        <div className="hidden md:block">
+          <NodeStatsCard
+            title="ALL Earnings"
+            value={(totalIncome ?? 0.00)}
+            icon={Server}
+            trend={{ value: 0, isPositive: true }}
+            loading={isLoading}
+          />
+        </div>
+        <div className="hidden md:block">
+          <NodeStatsCard
+            title="Today's Earning"
+            value={(TotalDay ?? 0.00)}
+            // description="Across all nodes"
+            icon={DollarSign}
+            // trend={{ value: 0, isPositive: true }}
+            loading={isLoading}
+          />
+        </div>
 
-        <NodeStatsCard
-          title="Today's Earning"
-          value={(TotalDay ?? 0.00)}
-          // description="Across all nodes"
-          icon={DollarSign}
-          // trend={{ value: 0, isPositive: true }}
-          loading={isLoading}
-        />
+
+
 
         <NodeStatsCard
           title="SNYX"
@@ -131,8 +130,7 @@ export default function DashboardPage() {
       </div>
 
       {/* My Nodes Table */}
-      <Card className="glass-card overflow-hidden relative">
-        {/* Add subtle gradient border */}
+      <Card className="glass-card overflow-hidden relative hidden md:block">
         <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-xl" />
 
         <CardHeader className="pb-2 z-10 relative">

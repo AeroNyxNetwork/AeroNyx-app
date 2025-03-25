@@ -9,4 +9,6 @@ export const API_ENDPOINTS = {
   PASSCODE: "http://localhost:9804/set_passcode",
   GET_MYPOINT_HISTORY:
     "https://nodev2.aeronyx.network/v2/power/get_my_point_history",
+  GET_NODD_INVITE_INFO:
+    "https://nodev2.aeronyx.network/v2/pub/get_node_invite_info",
 };
